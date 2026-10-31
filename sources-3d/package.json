@@ -1,0 +1,16 @@
+{
+  "name": "veillees-du-faso-3d",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scènes 3D de la version immersive de Veillées du Faso (Three.js)",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/experience.js --bundle --minify --format=esm --target=es2020 --legal-comments=eof --outfile=../js/experience.js"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}

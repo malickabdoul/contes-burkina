@@ -3,108 +3,156 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Veillées du Faso, contes et légendes du Burkina Faso</title>
-  <meta name="description" content="Une carte interactive du Burkina Faso pour écouter des contes, des légendes et des récits historiques, région par région, avec illustrations animées et voix en langues nationales.">
-  <meta name="theme-color" content="#141a36">
+  <title>Veillées du Faso</title>
+  <meta name="description" content="Une nuit de contes au Burkina Faso : la cour peinte de Tiébélé en 3D, la carte des 17 régions en relief et sept contes, légendes et récits racontés scène par scène, avec sons et voix en langues nationales.">
+  <meta name="theme-color" content="#14100D">
   <link rel="icon" href="img/feu.svg" type="image/svg+xml">
-  <link rel="preload" href="polices/alegreya-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="polices/unbounded-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="js/experience.js">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/experience.css">
 </head>
-<body>
-  <a class="evitement" href="#carte">Aller à la carte</a>
+<body class="immersif verrou">
+  <a class="evitement" href="simple.html">Aller à la version simple, sans 3D</a>
 
-  <header class="entete">
-    <a class="marque" href="#carte">
-      <img src="img/feu.svg" alt="" width="26" height="26">
+  <div class="entree" id="entree">
+    <div class="bande-tiebele" aria-hidden="true"></div>
+    <div class="entree-centre">
+      <p class="entree-titre">Veillées du Faso</p>
+      <p class="entree-texte">Une nuit de contes au Burkina Faso. Sept histoires, d'un bout à l'autre du pays.</p>
+      <div class="entree-boutons">
+        <button type="button" class="bouton-feu" id="entrer-son" disabled>Entrer avec le son</button>
+        <button type="button" class="bouton-discret clair" id="entrer-silence" disabled>Entrer sans le son</button>
+      </div>
+      <p class="entree-note" id="chargement" aria-live="polite">On allume le feu...</p>
+      <p class="entree-note">Le casque ou les écouteurs sont conseillés. <a href="simple.html">Version simple, sans 3D</a></p>
+      <noscript><p class="entree-note">Cette page a besoin de JavaScript. <a href="simple.html">Ouvrir la version simple</a>.</p></noscript>
+    </div>
+    <div class="bande-tiebele" aria-hidden="true"></div>
+  </div>
+
+  <header class="entete flottante">
+    <a class="marque" href="#ouverture">
+      <img src="img/feu.svg" alt="" width="24" height="24">
       <span>Veillées du Faso</span>
     </a>
-    <nav aria-label="Navigation principale">
-      <ul>
-        <li><a href="#carte">La carte</a></li>
-        <li><a href="#contes">Les contes</a></li>
-        <li><a href="#regions">Les régions</a></li>
-        <li><a href="#lexique">Lexique</a></li>
-        <li><a href="#sources">Sources</a></li>
-      </ul>
+    <div class="entete-outils">
+      <button type="button" class="outil" id="bouton-menu" aria-expanded="false" aria-controls="menu-contes">Les contes</button>
+      <button type="button" class="outil" id="bouton-son" aria-pressed="false">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="ondes" d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.6 8.6 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Son coupé</span>
+      </button>
+      <a class="outil" href="simple.html">Version simple</a>
+    </div>
+    <nav class="menu-contes" id="menu-contes" aria-label="Les sept contes" hidden>
+      <ol id="menu-liste"></ol>
+      <p><a href="#regions">Les régions, le lexique et les sources</a></p>
     </nav>
   </header>
+  <div class="avancement" id="avancement" aria-hidden="true"></div>
+
+  <canvas id="scene3d" aria-hidden="true"></canvas>
+  <div class="voile" id="voile" aria-hidden="true"></div>
+  <div class="etiquettes" id="etiquettes" aria-hidden="true"></div>
+  <div class="bulle-region" id="bulle-region" aria-hidden="true" hidden></div>
 
   <main>
-    <section class="accueil" id="carte" aria-labelledby="titre-site">
-      <div class="accueil-texte">
-        <h1 id="titre-site">Veillées du Faso</h1>
-        <p class="chapeau">Contes, légendes et récits du Burkina Faso, racontés région par région. Choisissez un feu sur la carte pour écouter une histoire.</p>
-        <div class="actions">
-          <button type="button" class="bouton-feu" id="btn-voyage">Faire le voyage</button>
-          <a class="bouton-discret" href="#contes">Voir les sept contes</a>
-        </div>
-        <p class="astuce">Le voyage enchaîne les sept contes d'un bout à l'autre du pays. Comptez une vingtaine de minutes.</p>
-      </div>
-
-      <div class="carte-zone">
-        <div class="carte-outils">
-          <div class="bascule" role="group" aria-label="Vue de la carte">
-            <button type="button" data-vue="plat" aria-pressed="true">À plat</button>
-            <button type="button" data-vue="relief" aria-pressed="false">En relief</button>
-          </div>
-          <button type="button" class="bouton-discret petit" id="vue-entiere" hidden>Voir tout le pays</button>
-        </div>
-        <div class="carte-scene" id="carte-scene">
-          <div class="plateau" id="plateau">
-            <div class="epaisseur" id="epaisseur" aria-hidden="true"></div>
-            <svg class="carte-svg" id="carte-svg" role="img" aria-label="Carte des 17 régions du Burkina Faso"></svg>
-            <div class="marqueurs" id="marqueurs"></div>
+    <div class="recit" id="recit">
+      <section class="chapitre" id="ouverture" aria-labelledby="titre-site">
+        <div class="etape" data-scene="village">
+          <div class="cartel-ouverture">
+            <h1 id="titre-site" tabindex="-1">Veillées du Faso</h1>
+            <p>Une nuit de contes au Burkina Faso.</p>
+            <p class="defiler">Faites défiler pour entrer dans la cour.</p>
           </div>
         </div>
-        <div class="info-region" id="info-region" aria-live="polite">
-          <p class="info-vide">Survolez ou touchez une région pour connaître l'histoire de son nom.</p>
+        <div class="etape" data-scene="village">
+          <div class="cartel">
+            <p>Nous sommes à Tiébélé, dans le sud du pays, chez les Kassena. Ici, les hommes bâtissent les maisons et les femmes les peignent. Cette peinture s'appelle le dora.</p>
+          </div>
         </div>
-      </div>
-    </section>
+        <div class="etape" data-scene="village">
+          <div class="cartel">
+            <p>Trois couleurs sur fond d'ocre : le rouge, le blanc et le noir. Chaque motif a un sens. Les triangles rappellent les morceaux d'un canari cassé, pour apprendre aux enfants à prendre soin des jarres.</p>
+            <p>Depuis 2024, la cour royale de Tiébélé est inscrite au patrimoine mondial de l'UNESCO.</p>
+          </div>
+        </div>
+        <div class="etape" data-scene="village">
+          <div class="cartel">
+            <p>La nuit tombe. On s'assoit autour du feu et le conteur prend la parole. Ce soir, il nous emmène dans tout le pays.</p>
+          </div>
+        </div>
+      </section>
 
-    <section class="section-contes" id="contes" aria-labelledby="titre-contes">
-      <div class="section-tete">
-        <h2 id="titre-contes">Les sept contes</h2>
-        <p>Des légendes de fondation, des récits sacrés, un rite royal, une enquête historique et un conte de veillée. Chaque histoire se lit en quelques minutes, scène par scène.</p>
-      </div>
-      <ul class="liste-contes" id="liste-contes"></ul>
-    </section>
+      <section class="chapitre" id="carte" aria-labelledby="titre-carte">
+        <div class="etape" data-scene="carte">
+          <div class="cartel">
+            <h2 id="titre-carte">Dix-sept régions</h2>
+            <p>Depuis juillet 2025, le Burkina Faso compte 17 régions. Leurs noms viennent des langues du pays, de ses rivières et de ses anciens royaumes.</p>
+            <p class="astuce-carte">Survolez une région pour lire l'histoire de son nom.</p>
+          </div>
+        </div>
+        <div class="etape" data-scene="carte" data-cle="chemin">
+          <div class="cartel">
+            <p>Sept feux brûlent sur la carte. Chacun garde une histoire. Suivez le chemin jaune, d'un feu à l'autre.</p>
+          </div>
+        </div>
+      </section>
 
-    <div class="bande-tiebele" aria-hidden="true"></div>
+      <!-- les sept contes sont ajoutés ici par js/experience.js -->
 
-    <section class="section-regions" id="regions" aria-labelledby="titre-regions">
-      <div class="section-tete">
-        <h2 id="titre-regions">Dix-sept régions, dix-sept noms qui racontent</h2>
-        <p>En juillet 2025, le Burkina Faso est passé de 13 à 17 régions. Leurs nouveaux noms viennent des langues du pays, de ses rivières et de ses anciens royaumes.</p>
-      </div>
-      <dl class="grille-regions" id="grille-regions"></dl>
-    </section>
+      <section class="chapitre" id="final" aria-labelledby="titre-final">
+        <div class="etape" data-scene="village">
+          <div class="cartel cartel-fin">
+            <h2 id="titre-final">Le feu baisse</h2>
+            <p>Les contes vivent tant qu'on les raconte. À votre tour de les dire, en mooré, en dioula, en fulfulde, en gulmancema ou en français.</p>
+            <div class="boutons">
+              <a class="bouton-feu" href="#ouverture">Revenir au début</a>
+              <a class="bouton-discret" href="#regions">Les régions et les sources</a>
+            </div>
+          </div>
+        </div>
+        <div class="etape etape-courte" data-scene="village"></div>
+      </section>
+    </div>
 
-    <section class="section-lexique" id="lexique" aria-labelledby="titre-lexique">
-      <div class="section-tete">
-        <h2 id="titre-lexique">Petit lexique</h2>
-        <p>Quelques mots rencontrés dans les contes. Dans les textes, ces mots sont soulignés : touchez-les pour voir leur sens.</p>
-      </div>
-      <dl class="lexique" id="liste-lexique"></dl>
-    </section>
+    <div class="apres">
+      <div class="bande-tiebele" aria-hidden="true"></div>
+      <section class="section-regions" id="regions" aria-labelledby="titre-regions">
+        <div class="section-tete">
+          <h2 id="titre-regions">Dix-sept régions, dix-sept noms qui racontent</h2>
+          <p>En juillet 2025, le Burkina Faso est passé de 13 à 17 régions. Voici le sens de leurs nouveaux noms.</p>
+        </div>
+        <dl class="grille-regions" id="grille-regions"></dl>
+      </section>
 
-    <section class="section-sources" id="sources" aria-labelledby="titre-sources">
-      <div class="section-tete">
-        <h2 id="titre-sources">Sources et crédits</h2>
-        <p>Les contes sont racontés avec nos mots, à partir des sources ci-dessous. Quand les versions divergent, nous le disons dans le conte.</p>
-      </div>
-      <div class="colonnes-sources" id="liste-sources"></div>
-      <div class="credits">
-        <h3>Réalisation</h3>
-        <p>OUOBA Youmanli William Arnaud, OUEDRAOGO Pégué Judicaël, NIKIEMA Abdoul Fatahou et KOMPAORE Abdoul Malick, étudiants en Master 1 Informatique à l'IBAM.</p>
-        <p>Les illustrations et les ambiances sonores ont été créées pour ce site. Les voix en langues nationales sont enregistrées par le groupe et ses proches.</p>
-      </div>
-    </section>
+      <section class="section-lexique" id="lexique" aria-labelledby="titre-lexique">
+        <div class="section-tete">
+          <h2 id="titre-lexique">Petit lexique</h2>
+          <p>Quelques mots rencontrés dans les contes. Dans le lecteur, ces mots sont soulignés : touchez-les pour voir leur sens.</p>
+        </div>
+        <dl class="lexique" id="liste-lexique"></dl>
+      </section>
+
+      <section class="section-sources" id="sources" aria-labelledby="titre-sources">
+        <div class="section-tete">
+          <h2 id="titre-sources">Sources et crédits</h2>
+          <p>Les contes sont racontés avec nos mots, à partir des sources ci-dessous. Quand les versions divergent, nous le disons dans le conte.</p>
+        </div>
+        <div class="colonnes-sources" id="liste-sources"></div>
+        <div class="credits">
+          <h3>Réalisation</h3>
+          <p>OUOBA Youmanli William Arnaud, OUEDRAOGO Pégué Judicaël, NIKIEMA Abdoul Fatahou et KOMPAORE Abdoul Malick, étudiants en Master 1 Informatique à l'IBAM.</p>
+          <p>La cour de Tiébélé en 3D, les décors des contes et les ambiances sonores ont été créés pour ce site. Les voix en langues nationales sont enregistrées par le groupe et ses proches.</p>
+          <p>Rendu 3D avec Three.js (licence MIT). Polices Unbounded et Alegreya (licence SIL OFL).</p>
+        </div>
+      </section>
+
+      <footer class="pied">
+        <p>Projet Web Multimédia, Master 1 Informatique, IBAM, 2026. <a href="simple.html">Version simple du site</a>.</p>
+      </footer>
+    </div>
   </main>
-
-  <footer class="pied">
-    <p>Projet Web Multimédia, Master 1 Informatique, IBAM, 2026.</p>
-  </footer>
 
   <dialog class="lecteur" id="lecteur" aria-labelledby="lecteur-titre">
     <div class="lecteur-cadre">
@@ -166,6 +214,7 @@
   <script src="js/carte-donnees.js"></script>
   <script src="js/contes.js"></script>
   <script src="js/illustrations.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/lecteur.js"></script>
+  <script type="module" src="js/experience.js"></script>
 </body>
 </html>

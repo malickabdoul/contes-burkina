@@ -284,3 +284,10 @@ window.SOURCES_GENERALES = [
   { titre: "« Les toponymes des 17 régions et leur signification », Sidwaya, 8 juillet 2025 (Service d'information du gouvernement)", url: "https://www.sidwaya.info/reorganisation-administrative-du-territoire-les-toponymes-des-17-regions-et-leur-signification/" },
   { titre: "Contours des provinces : geoBoundaries, d'après la Banque mondiale (2017), licence CC BY 4.0", url: "https://www.geoboundaries.org/" },
 ];
+
+// La cour de Tiébélé (ouverture de la version immersive).
+window.SOURCES_TIEBELE = [
+  { titre: "« Royal Court of Tiébélé », Centre du patrimoine mondial de l'UNESCO", url: "https://whc.unesco.org/en/list/1713" },
+  { titre: "« Peinture murale Kassena : le dora, une prouesse artistique féminine à l'épreuve du temps », Sidwaya, 6 novembre 2023", url: "https://www.sidwaya.info/peinture-murale-kassena-le-dora-une-prouesse-artistique-feminine-a-lepreuve-du-temps/" },
+  { titre: "« UNESCO : la Cour royale de Tiébélé figure désormais sur la Liste du patrimoine mondial », Sidwaya, 26 juillet 2024", url: "https://www.sidwaya.info/unesco-la-cour-royale-de-tiebele-figure-desormais-sur-la-liste-du-patrimoine-mondial/" },
+];
