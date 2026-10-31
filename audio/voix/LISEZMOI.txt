@@ -1,0 +1,3 @@
+Les enregistrements en langues nationales vont ici.
+Nom des fichiers : <conte>-<langue>.mp3, par exemple yennenga-moore.mp3.
+Voir le README à la racine du dépôt.

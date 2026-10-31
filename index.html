@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Veillées du Faso, contes et légendes du Burkina Faso</title>
+  <meta name="description" content="Une carte interactive du Burkina Faso pour écouter des contes, des légendes et des récits historiques, région par région, avec illustrations animées et voix en langues nationales.">
+  <meta name="theme-color" content="#141a36">
+  <link rel="icon" href="img/feu.svg" type="image/svg+xml">
+  <link rel="preload" href="polices/alegreya-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="evitement" href="#carte">Aller à la carte</a>
+
+  <header class="entete">
+    <a class="marque" href="#carte">
+      <img src="img/feu.svg" alt="" width="26" height="26">
+      <span>Veillées du Faso</span>
+    </a>
+    <nav aria-label="Navigation principale">
+      <ul>
+        <li><a href="#carte">La carte</a></li>
+        <li><a href="#contes">Les contes</a></li>
+        <li><a href="#regions">Les régions</a></li>
+        <li><a href="#lexique">Lexique</a></li>
+        <li><a href="#sources">Sources</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="accueil" id="carte" aria-labelledby="titre-site">
+      <div class="accueil-texte">
+        <h1 id="titre-site">Veillées du Faso</h1>
+        <p class="chapeau">Contes, légendes et récits du Burkina Faso, racontés région par région. Choisissez un feu sur la carte pour écouter une histoire.</p>
+        <div class="actions">
+          <button type="button" class="bouton-feu" id="btn-voyage">Faire le voyage</button>
+          <a class="bouton-discret" href="#contes">Voir les sept contes</a>
+        </div>
+        <p class="astuce">Le voyage enchaîne les sept contes d'un bout à l'autre du pays. Comptez une vingtaine de minutes.</p>
+      </div>
+
+      <div class="carte-zone">
+        <div class="carte-outils">
+          <div class="bascule" role="group" aria-label="Vue de la carte">
+            <button type="button" data-vue="plat" aria-pressed="true">À plat</button>
+            <button type="button" data-vue="relief" aria-pressed="false">En relief</button>
+          </div>
+          <button type="button" class="bouton-discret petit" id="vue-entiere" hidden>Voir tout le pays</button>
+        </div>
+        <div class="carte-scene" id="carte-scene">
+          <div class="plateau" id="plateau">
+            <div class="epaisseur" id="epaisseur" aria-hidden="true"></div>
+            <svg class="carte-svg" id="carte-svg" role="img" aria-label="Carte des 17 régions du Burkina Faso"></svg>
+            <div class="marqueurs" id="marqueurs"></div>
+          </div>
+        </div>
+        <div class="info-region" id="info-region" aria-live="polite">
+          <p class="info-vide">Survolez ou touchez une région pour connaître l'histoire de son nom.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-contes" id="contes" aria-labelledby="titre-contes">
+      <div class="section-tete">
+        <h2 id="titre-contes">Les sept contes</h2>
+        <p>Des légendes de fondation, des récits sacrés, un rite royal, une enquête historique et un conte de veillée. Chaque histoire se lit en quelques minutes, scène par scène.</p>
+      </div>
+      <ul class="liste-contes" id="liste-contes"></ul>
+    </section>
+
+    <div class="bande-tiebele" aria-hidden="true"></div>
+
+    <section class="section-regions" id="regions" aria-labelledby="titre-regions">
+      <div class="section-tete">
+        <h2 id="titre-regions">Dix-sept régions, dix-sept noms qui racontent</h2>
+        <p>En juillet 2025, le Burkina Faso est passé de 13 à 17 régions. Leurs nouveaux noms viennent des langues du pays, de ses rivières et de ses anciens royaumes.</p>
+      </div>
+      <dl class="grille-regions" id="grille-regions"></dl>
+    </section>
+
+    <section class="section-lexique" id="lexique" aria-labelledby="titre-lexique">
+      <div class="section-tete">
+        <h2 id="titre-lexique">Petit lexique</h2>
+        <p>Quelques mots rencontrés dans les contes. Dans les textes, ces mots sont soulignés : touchez-les pour voir leur sens.</p>
+      </div>
+      <dl class="lexique" id="liste-lexique"></dl>
+    </section>
+
+    <section class="section-sources" id="sources" aria-labelledby="titre-sources">
+      <div class="section-tete">
+        <h2 id="titre-sources">Sources et crédits</h2>
+        <p>Les contes sont racontés avec nos mots, à partir des sources ci-dessous. Quand les versions divergent, nous le disons dans le conte.</p>
+      </div>
+      <div class="colonnes-sources" id="liste-sources"></div>
+      <div class="credits">
+        <h3>Réalisation</h3>
+        <p>OUOBA Youmanli William Arnaud, OUEDRAOGO Pégué Judicaël, NIKIEMA Abdoul Fatahou et KOMPAORE Abdoul Malick, étudiants en Master 1 Informatique à l'IBAM.</p>
+        <p>Les illustrations et les ambiances sonores ont été créées pour ce site. Les voix en langues nationales sont enregistrées par le groupe et ses proches.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pied">
+    <p>Projet Web Multimédia, Master 1 Informatique, IBAM, 2026.</p>
+  </footer>
+
+  <dialog class="lecteur" id="lecteur" aria-labelledby="lecteur-titre">
+    <div class="lecteur-cadre">
+      <header class="lecteur-tete">
+        <div>
+          <p class="lecteur-meta" id="lecteur-meta"></p>
+          <h2 id="lecteur-titre"></h2>
+        </div>
+        <button type="button" class="fermer" id="lecteur-fermer" aria-label="Fermer le conte">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </header>
+
+      <div class="lecteur-corps" id="lecteur-corps">
+        <div class="lecteur-scene" id="lecteur-scene"></div>
+        <div class="lecteur-texte">
+          <p id="scene-texte"></p>
+        </div>
+        <div class="lecteur-commandes">
+          <button type="button" class="bouton-discret" id="scene-prec">Précédent</button>
+          <p class="progression" id="progression"></p>
+          <button type="button" class="bouton-feu" id="scene-suiv">Suivant</button>
+        </div>
+      </div>
+
+      <div class="lecteur-fin" id="lecteur-fin" hidden>
+        <h3>Ce que le conte nous apprend</h3>
+        <p class="lecon" id="fin-lecon"></p>
+        <p class="note" id="fin-note"></p>
+        <form class="quiz" id="quiz">
+          <h3>Trois questions pour finir</h3>
+          <div id="quiz-questions"></div>
+          <p class="quiz-score" id="quiz-score" aria-live="polite"></p>
+        </form>
+        <div class="fin-sources">
+          <h3>Sources</h3>
+          <ul id="fin-sources"></ul>
+        </div>
+        <div class="fin-actions">
+          <button type="button" class="bouton-discret" id="fin-relire">Relire depuis le début</button>
+          <button type="button" class="bouton-feu" id="fin-suivant"></button>
+        </div>
+      </div>
+
+      <footer class="lecteur-audio">
+        <button type="button" class="interrupteur" id="ambiance" aria-pressed="true">Ambiance sonore</button>
+        <div class="voix" role="group" aria-label="Écouter le conte">
+          <span class="voix-titre">Écouter en</span>
+          <div class="voix-choix" id="voix-choix"></div>
+        </div>
+      </footer>
+    </div>
+    <div class="definition" id="definition" role="tooltip" hidden></div>
+  </dialog>
+
+  <audio id="audio-ambiance" loop preload="none"></audio>
+  <audio id="audio-voix" preload="none"></audio>
+
+  <script src="js/carte-donnees.js"></script>
+  <script src="js/contes.js"></script>
+  <script src="js/illustrations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
