@@ -370,4 +370,16 @@ window.SOURCES_TIEBELE = [
 
 // Narration en français de la version immersive : un fichier par étape dans audio/narration/
 // (exemple : yennenga-1.mp3). On liste ici les noms des fichiers déjà déposés, sans « .mp3 ».
-window.NARRATION = [];
+window.NARRATION = [
+  "ouverture-1",
+  "ouverture-2",
+  "ouverture-3",
+  "ouverture-4",
+  "carte-1",
+  "faux-depart-titre",
+  "faux-depart-1",
+  "faux-depart-2",
+  "faux-depart-3",
+  "faux-depart-4",
+  "faux-depart-5",
+];
