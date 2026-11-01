@@ -205,6 +205,7 @@
 
   function preparerVoix() {
     arreterVoix();
+    langueEnCours = null;
     zoneVoix.innerHTML = Object.entries(LANGUES).map(([code, nom]) =>
       `<button type="button" data-langue="${code}" aria-pressed="false">${nom}</button>`).join("");
     zoneVoix.querySelectorAll("button").forEach((b) => verifierVoix(actuel.id, b));
@@ -239,7 +240,15 @@
     if (ambianceActive) fondu(aAmb, .1, 600);
   });
   aVoix.addEventListener("ended", () => { langueEnCours = null; majBoutonsVoix(); if (ambianceActive) fondu(aAmb, .34, 1200); });
-  function majBoutonsVoix() { zoneVoix.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.langue === langueEnCours))); }
+  const conteur = document.createElement("span");
+  conteur.className = "voix-conteur";
+  conteur.setAttribute("aria-live", "polite");
+  zoneVoix.after(conteur);
+  function majBoutonsVoix() {
+    zoneVoix.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.langue === langueEnCours)));
+    const nom = actuel && actuel.conteurs && langueEnCours && voixConnues[`${actuel.id}-${langueEnCours}`] ? actuel.conteurs[langueEnCours] : "";
+    conteur.textContent = nom ? `Raconté par ${nom}` : "";
+  }
   function arreterVoix() { aVoix.pause(); aVoix.removeAttribute("src"); if (!lectureFr) langueEnCours = null; }
 
   function lireScene() {
@@ -261,6 +270,14 @@
     langueEnCours = null;
     majBoutonsVoix();
     if (ambianceActive && !aAmb.paused) fondu(aAmb, .34, 1000);
+  }
+
+  // crédits : qui raconte quel conte, dans quelle langue
+  const zoneCredits = $("#credits-voix");
+  if (zoneCredits) {
+    const lignes = [];
+    CONTES.forEach((c) => (c.voix || []).forEach((l) => { if (c.conteurs && c.conteurs[l]) lignes.push(`${c.titre} en ${LANGUES[l].toLowerCase()} : ${c.conteurs[l]}`); }));
+    zoneCredits.textContent = lignes.length ? `Voix déjà enregistrées. ${lignes.join(". ")}.` : "";
   }
 
   Lecteur.ouvrir = ouvrir;

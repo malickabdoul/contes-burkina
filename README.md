@@ -72,7 +72,7 @@ npm run build
    Contes : `yennenga`, `faux-depart`, `sabou`, `dafra`, `diaba-lompo`, `yemboado`, `loropeni`, `araignee`, `petite-querelle`.
    Langues : `moore`, `dioula`, `fulfulde`, `gulmancema`, `francais`.
    Exemple : `audio/voix/yennenga-moore.mp3`.
-3. Dans `js/contes.js`, ajouter la langue dans la liste `voix` du conte. Exemple : `voix: ["moore"]`.
+3. Dans `js/contes.js`, ajouter la langue dans la liste `voix` du conte, et le nom de la personne qui raconte dans `conteurs`. Exemple : `voix: ["moore"]` et `conteurs: { moore: "Prénom NOM" }`. Le nom s'affiche pendant l'écoute et dans les crédits.
 
 Tant qu'une langue n'est pas enregistrée, son bouton reste en pointillés. Pour le français, sans enregistrement, le site utilise la voix de lecture du navigateur.
 

@@ -212,6 +212,8 @@ main > section { padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
 .voix-choix button { border: 2px solid var(--kaolin); background: transparent; padding: .3rem .7rem; font: 700 .7rem var(--titre); }
 .voix-choix button[aria-pressed="true"] { background: var(--jaune); color: var(--noir); border-color: var(--jaune); }
 .voix-choix button.absente { border-style: dashed; opacity: .7; }
+.voix-conteur { font-style: italic; color: var(--jaune); }
+.voix-conteur:empty { display: none; }
 
 /* ---------- animations des illustrations ---------- */
 .scene-svg .entree { animation: apparait 1.2s ease-out both; }

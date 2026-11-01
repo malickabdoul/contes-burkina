@@ -1,7 +1,8 @@
 // Contenu du site : contes, lexique et sources.
 // Pour ajouter un enregistrement : déposer le fichier dans audio/voix/ sous le nom
 // <id du conte>-<langue>.mp3 (exemple : yennenga-moore.mp3), puis ajouter le code de la
-// langue dans la liste « voix » du conte (exemple : voix: ["moore"]).
+// langue dans la liste « voix » du conte (exemple : voix: ["moore"]), et le nom de la
+// personne qui raconte dans « conteurs » (exemple : conteurs: { moore: "Prénom NOM" }).
 
 window.LANGUES = {
   moore: "Mooré",
@@ -22,6 +23,7 @@ window.CONTES = [
     langue: "moore",
     ambiance: "savane",
     voix: ["moore", "francais"], // langues déjà enregistrées, par exemple ["moore", "francais"]
+    conteurs: { moore: "NIKIEMA Abdoul Fatahou", francais: "NIKIEMA Abdoul Fatahou" }, // qui raconte, pour les crédits
     resume: "La fuite d'une princesse guerrière, et la naissance du peuple mossi.",
     scenes: [
       { decor: "jour", sol: "palais", elements: ["guerriere"],
