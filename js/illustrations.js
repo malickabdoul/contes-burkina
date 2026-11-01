@@ -129,59 +129,110 @@
   }
 
   // ---------- personnages et animaux (silhouettes articulées) ----------
+  // ---------- les personnes : peau, visage de profil, vêtements en pagne rayé ----------
+  const PEAUX = ["#5C3722", "#4B2C1B", "#6A4029", "#3E2416"];
+  const HABITS = [[ROUGE, NOIR], [VERT, JAUNE], [JAUNE, NOIR], [OCRE, KAOLIN], [KAOLIN, ROUGE], [NOIR, KAOLIN]];
+  const BOIS = "#2A1A10", CHEVEUX = "#120C08";
+  let idTissu = 0;
+  const choix = (x, y) => Math.abs(Math.round(x * 7 + y * 13 + x * y * .01));
+  // une étoffe : la forme, ses rayures, un contour noir
+  function etoffe(d, couleur, rayure) {
+    const id = "tissu" + (++idTissu);
+    let r = "";
+    for (let i = -60; i < 60; i += 7) r += `<rect x="${i}" y="-140" width="2.2" height="150" fill="${rayure}"/>`;
+    return `<clipPath id="${id}"><path d="${d}"/></clipPath><path d="${d}" fill="${couleur}"/><g clip-path="url(#${id})" opacity=".8">${r}</g><path d="${d}" fill="none" stroke="${NOIR}" stroke-width="1.6" stroke-linejoin="round"/>`;
+  }
+  // un membre cerné de noir
+  const trait = (x1, y1, x2, y2, couleur, l) =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${NOIR}" stroke-width="${l + 2.6}" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${couleur}" stroke-width="${l}" stroke-linecap="round"/>`;
+  const pied = (x, y, peau) => `<path d="M${x - 3} ${y} L${x - 3} ${y - 3} Q${x + 2} ${y - 5} ${x + 7} ${y - 1} L${x + 7} ${y}Z" fill="${peau}" stroke="${NOIR}" stroke-width="1.3"/>`;
+  // tête de profil, tournée vers la droite
+  function tete(cx, cy, r, peau, coiffe, couleur) {
+    let s = `<ellipse cx="${cx}" cy="${cy}" rx="${(r * .92).toFixed(1)}" ry="${(r * 1.06).toFixed(1)}" fill="${peau}" stroke="${NOIR}" stroke-width="1.4"/>
+      <path d="M${cx + r * .82} ${cy - r * .15} L${cx + r * 1.2} ${cy + r * .22} L${cx + r * .82} ${cy + r * .32}Z" fill="${peau}" stroke="${NOIR}" stroke-width="1.1" stroke-linejoin="round"/>
+      <circle cx="${cx + r * .45}" cy="${cy - r * .2}" r="${(r * .14).toFixed(1)}" fill="${NOIR}"/>
+      <path d="M${cx + r * .5} ${cy + r * .5} q${r * .2} ${r * .06} ${r * .35} -${r * .04}" stroke="${NOIR}" stroke-width=".9" fill="none"/>`;
+    if (coiffe === "bonnet") s += `<path d="M${cx - r * .98} ${cy - r * .4} L${cx - r * .8} ${cy - r * 1.5} L${cx + r * .82} ${cy - r * 1.5} L${cx + r * .98} ${cy - r * .4} Q${cx} ${cy - r * .62} ${cx - r * .98} ${cy - r * .4}Z" fill="${couleur}" stroke="${NOIR}" stroke-width="1.3" stroke-linejoin="round"/>`;
+    else if (coiffe === "foulard") s += `<circle cx="${cx - r * 1.05}" cy="${cy - r * .75}" r="${(r * .5).toFixed(1)}" fill="${couleur}" stroke="${NOIR}" stroke-width="1.2"/>
+      <path d="M${cx - r * 1.05} ${cy + r * .2} Q${cx - r * 1.25} ${cy - r * 1.65} ${cx + r * .35} ${cy - r * 1.4} Q${cx + r * 1.05} ${cy - r * 1.1} ${cx + r * .8} ${cy - r * .5} Q${cx + r * .1} ${cy - r * .78} ${cx - r * .5} ${cy - r * .25} Q${cx - r * .75} ${cy + r * .05} ${cx - r * 1.05} ${cy + r * .2}Z" fill="${couleur}" stroke="${NOIR}" stroke-width="1.3" stroke-linejoin="round"/>`;
+    else s += `<path d="M${cx - r * .95} ${cy + r * .15} Q${cx - r * 1.05} ${cy - r * 1.2} ${cx + r * .6} ${cy - r * .98} Q${cx + r * .25} ${cy - r * .55} ${cx - r * .25} ${cy - r * .5} Q${cx - r * .62} ${cy - r * .25} ${cx - r * .95} ${cy + r * .15}Z" fill="${CHEVEUX}"/>`;
+    return s;
+  }
+  // bras en deux parties : manche en tissu, avant-bras et main en peau
+  function bras(ax, ay, bx, by, manche, peau, plie = 1) {
+    const mx = (ax + bx) / 2, my = (ay + by) / 2, dx = bx - ax, dy = by - ay, n = Math.hypot(dx, dy) || 1;
+    const cx = mx - dy / n * 4 * plie, cy = my + dx / n * 4 * plie;
+    return trait(ax, ay, cx, cy, manche, 6.5) + trait(cx, cy, bx, by, peau, 5) + `<circle cx="${bx}" cy="${by}" r="3.3" fill="${peau}" stroke="${NOIR}" stroke-width="1.1"/>`;
+  }
+  function objetTenu(objet, lx, ly) {
+    if (objet === "lance") return `<line x1="${lx + 2}" y1="${ly + 30}" x2="${lx + 8}" y2="-150" stroke="${BOIS}" stroke-width="3"/><path d="M${lx + 8} -164 L${lx + 3} -148 L${lx + 13} -148Z" fill="${NOIR}"/>`;
+    if (objet === "arc") return `<path d="M${lx - 4} ${ly - 46} Q${lx + 26} ${ly} ${lx - 4} ${ly + 46}" fill="none" stroke="${BOIS}" stroke-width="3"/><line x1="${lx - 4}" y1="${ly - 46}" x2="${lx - 4}" y2="${ly + 46}" stroke="${NOIR}" stroke-width="1"/>`;
+    if (objet === "baton") return `<line x1="${lx}" y1="${ly - 6}" x2="${lx + 6}" y2="0" stroke="${BOIS}" stroke-width="3.2"/>`;
+    if (objet === "poulet") return poulet(lx + 8, ly + 8, .55);
+    if (objet === "calebasse") return calebasse(lx + 6, ly + 6, .55);
+    return "";
+  }
+
   function personne(x, y, s = 1, o = {}) {
-    const robe = o.robe || OMBRE;
-    const tete = o.coiffe === "bonnet" ? `<path d="M-9 -98 Q0 -112 9 -98Z" fill="${o.bonnet || robe}"/>` :
-      o.coiffe === "foulard" ? `<path d="M-10 -92 Q0 -108 10 -92 L12 -86 L-12 -86Z" fill="${OMBRE}"/>` : "";
+    const k = choix(x, y);
+    const peau = o.peau || PEAUX[k % PEAUX.length];
+    const [tissu, rayure] = o.robe ? [o.robe, o.liseré || (o.robe === KAOLIN ? ROUGE : NOIR)] : HABITS[k % HABITS.length];
+    const femme = o.coiffe === "foulard";
+    const [pagne, rayurePagne] = HABITS[(k + 2) % HABITS.length];
+    const coiffeC = o.bonnet || (femme ? pagne : ROUGE);
+    const coiffe = o.coiffe || (k % 3 === 0 ? "bonnet" : "");
+    const manche = o.manches || tissu;
     const pose = o.pose || "debout";
-    let corps;
+    const sens = (corps) => g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, corps, o.cls);
+
     if (pose === "assis") {
-      corps = `<circle cx="0" cy="-56" r="8" fill="${OMBRE}"/>${o.coiffe === "bonnet" ? `<path d="M-8 -62 Q0 -74 8 -62Z" fill="${o.bonnet || OMBRE}"/>` : o.coiffe === "foulard" ? `<path d="M-9 -58 Q0 -72 9 -58 L10 -54 L-10 -54Z" fill="${OMBRE}"/>` : ""}
-        <path d="M-13 -48 L13 -48 L20 -10 L-20 -10Z" fill="${robe}"/><ellipse cx="0" cy="-6" rx="26" ry="7" fill="${robe}"/>`;
-      return g(`translate(${x} ${y}) scale(${s})`, corps, o.cls);
+      const corps = trait(-2, -12, 22, -14, femme ? pagne : "#3A2A1E", 9) + trait(22, -14, 24, -2, peau, 6) + pied(25, 0, peau)
+        + etoffe("M-12 -50 Q0 -54 11 -50 L15 -12 Q0 -8 -15 -12Z", tissu, rayure)
+        + trait(0, -54, 1, -50, peau, 5) + tete(2, -62, 8, peau, coiffe, coiffeC)
+        + bras(7, -46, 21, -20, manche, peau);
+      return sens(corps);
     }
     if (pose === "agenouille") {
-      corps = `<circle cx="6" cy="-66" r="8" fill="${OMBRE}"/><path d="M-6 -58 L14 -58 L18 -24 L-10 -24Z" fill="${robe}" transform="rotate(${o.penche || 18} 4 -24)"/>
-        <path d="M-12 -24 L18 -24 L22 0 L-18 0Z" fill="${robe}"/><line x1="10" y1="-50" x2="34" y2="-30" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>`;
-      const objet = o.objet === "poulet" ? poulet(38, -24, .6) : o.objet === "calebasse" ? calebasse(40, -26, .6) : o.objet === "pinceau" ? `<line x1="34" y1="-30" x2="50" y2="-18" stroke="${OMBRE}" stroke-width="3"/>` : "";
-      return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, corps + objet, o.cls);
+      const p = o.penche || 18;
+      const corps = trait(-16, -3, 8, -3, femme ? pagne : "#3A2A1E", 8) + trait(8, -3, -4, -20, femme ? pagne : "#3A2A1E", 9) + pied(-18, 0, peau)
+        + g(`rotate(${p} -4 -22)`, etoffe("M-12 -60 Q-2 -64 9 -60 L11 -20 Q-2 -16 -14 -20Z", tissu, rayure)
+          + trait(-1, -63, -1, -59, peau, 5) + tete(1, -72, 8, peau, coiffe, coiffeC))
+        + bras(4, -50, 34, -30, manche, peau, -1)
+        + (o.objet === "poulet" ? poulet(38, -24, .6) : o.objet === "calebasse" ? calebasse(40, -26, .6) : o.objet === "pinceau" ? `<line x1="34" y1="-30" x2="50" y2="-18" stroke="${BOIS}" stroke-width="3"/>` : "");
+      return sens(corps);
     }
     const marche = pose === "marche";
+    const jambeG = trait(-5, -32, -7, -4, femme ? peau : "#3A2A1E", 7) + pied(-8, 0, peau);
+    const jambeD = trait(5, -32, 7, -4, femme ? peau : "#3A2A1E", 7) + pied(6, 0, peau);
     const jambes = marche
-      ? `<g class="anim-jambe-a"><line x1="-4" y1="-32" x2="-12" y2="0" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/></g>
-         <g class="anim-jambe-b"><line x1="4" y1="-32" x2="12" y2="0" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/></g>`
-      : `<line x1="-6" y1="-32" x2="-7" y2="0" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/><line x1="6" y1="-32" x2="7" y2="0" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>`;
+      ? `<g class="anim-jambe-a">${trait(-4, -32, -12, -4, femme ? peau : "#3A2A1E", 7)}${pied(-13, 0, peau)}</g><g class="anim-jambe-b">${trait(4, -32, 12, -4, femme ? peau : "#3A2A1E", 7)}${pied(11, 0, peau)}</g>`
+      : jambeG + jambeD;
     const penche = pose === "penche" ? 'transform="rotate(22 0 -32)"' : "";
     const brasL = pose === "bras-leves" ? [-24, -112] : pose === "penche" ? [-14, -50] : [-20, -46];
     const [lx, ly] = pose === "bras-leves" ? [24, -112] : o.objet === "lance" ? [22, -60] : [20, -46];
-    let objet = "";
-    if (o.objet === "lance") objet = `<line x1="${lx + 2}" y1="${ly + 30}" x2="${lx + 8}" y2="-150" stroke="${OMBRE}" stroke-width="3"/><path d="M${lx + 8} -164 L${lx + 3} -148 L${lx + 13} -148Z" fill="${OMBRE}"/>`;
-    if (o.objet === "arc") objet = `<path d="M${lx - 4} ${ly - 46} Q${lx + 26} ${ly} ${lx - 4} ${ly + 46}" fill="none" stroke="${OMBRE}" stroke-width="3"/><line x1="${lx - 4}" y1="${ly - 46}" x2="${lx - 4}" y2="${ly + 46}" stroke="${OMBRE}" stroke-width="1"/>`;
-    if (o.objet === "baton") objet = `<line x1="${lx}" y1="${ly}" x2="${lx + 6}" y2="0" stroke="${OMBRE}" stroke-width="3"/>`;
-    if (o.objet === "poulet") objet = poulet(lx + 8, ly + 8, .55);
-    if (o.objet === "calebasse") objet = calebasse(lx + 6, ly + 6, .55);
-    const garniture = o.liseré ? `<path d="M-12 -80 L12 -80 L19 -30 L-19 -30Z" fill="none" stroke="${o.liseré}" stroke-width="2.5"/>` : "";
-    corps = `${jambes}<g ${penche}><circle cx="0" cy="-90" r="8" fill="${OMBRE}"/>${tete}
-      <path d="M-12 -80 L12 -80 L19 -30 L-19 -30Z" fill="${robe}"/>${garniture}
-      <line x1="-12" y1="-78" x2="${brasL[0]}" y2="${brasL[1]}" stroke="${o.manches || OMBRE}" stroke-width="5" stroke-linecap="round"/>
-      <line x1="12" y1="-78" x2="${lx}" y2="${ly}" stroke="${o.manches || OMBRE}" stroke-width="5" stroke-linecap="round"/>${objet}</g>`;
-    return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, corps, o.cls);
+    const robeLongue = femme ? etoffe("M-16 -48 L16 -48 L19 -8 Q0 -5 -19 -8Z", pagne, rayurePagne) : "";
+    const garniture = o.liseré && o.robe ? `<path d="M-1 -80 L-1 -30 M1 -80 L1 -30" stroke="${o.liseré}" stroke-width="2"/>` : "";
+    const corps = `${jambes}<g ${penche}>${bras(-11, -77, brasL[0], brasL[1], manche, peau, -1)}${robeLongue}
+      ${etoffe("M-12 -80 Q0 -84 12 -80 L19 -30 Q0 -26 -19 -30Z", tissu, rayure)}${garniture}
+      ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}
+      ${bras(11, -77, lx, ly, manche, peau, pose === "bras-leves" ? -1 : 1)}${objetTenu(o.objet, lx, ly)}</g>`;
+    return sens(corps);
   }
 
   // cheval : (x, y) = sabots au sol, à gauche de la silhouette
   function cheval(x, y, s = 1, o = {}) {
     const allure = o.allure || "galop";
     const arret = allure === "debout" ? "-arret" : "";
-    const coul = o.couleur || OMBRE, contour = o.couleur ? ` stroke="${NOIR}" stroke-width="2.5"` : "";
+    const coul = o.couleur || "#5A3720", contour = ` stroke="${NOIR}" stroke-width="2.2"`;
     const jambe = (x1, y1, ang, cls) => {
       const x2 = (x1 + Math.sin(ang) * 32).toFixed(1), y2 = (y1 + Math.cos(ang) * 32).toFixed(1);
-      return `<g class="${cls}${arret}" style="transform-origin:${x1}px ${y1}px">${o.couleur ? `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${NOIR}" stroke-width="10" stroke-linecap="round"/>` : ""}<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${coul}" stroke-width="6" stroke-linecap="round"/></g>`;
+      return `<g class="${cls}${arret}" style="transform-origin:${x1}px ${y1}px"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${NOIR}" stroke-width="9.5" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${coul}" stroke-width="6" stroke-linecap="round"/></g>`;
     };
     const k = allure === "galop" ? 1 : allure === "pas" ? .4 : 0;
     const jambes = jambe(96, 54, .6 * k, "anim-patte-av") + jambe(88, 56, .2 * k, "anim-patte-av2") + jambe(48, 54, -.6 * k, "anim-patte-ar") + jambe(40, 52, -.2 * k, "anim-patte-ar2");
-    const cavalier = o.cavalier ? `<g class="cavalier"><path d="M62 34 L70 6 L80 8 L74 36Z" fill="${o.robe || OMBRE}"/><circle cx="76" cy="-2" r="7" fill="${OMBRE}"/>
-      <line x1="76" y1="16" x2="104" y2="22" stroke="${OMBRE}" stroke-width="4" stroke-linecap="round"/>
-      <path d="M64 34 L58 58" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>
+    const kc = choix(x, y), peauC = PEAUX[kc % PEAUX.length], [tissuC, rayureC] = o.robe ? [o.robe, NOIR] : HABITS[(kc + 1) % HABITS.length];
+    const cavalier = o.cavalier ? `<g class="cavalier">${trait(64, 34, 58, 58, "#3A2A1E", 5)}${etoffe("M60 36 L68 6 Q75 3 82 8 L76 38Z", tissuC, rayureC)}
+      ${tete(76, -4, 7, peauC, kc % 2 ? "bonnet" : "", ROUGE)}${bras(74, 12, 104, 22, tissuC, peauC)}
       ${o.lance ? `<line x1="60" y1="40" x2="128" y2="-16" stroke="${OMBRE}" stroke-width="3"/><path d="M134 -21 L122 -16 L128 -10Z" fill="${OMBRE}"/>` : ""}</g>` : "";
     const corps = `<g class="${allure === "galop" ? "anim-galop" : allure === "pas" ? "anim-pas" : ""}">${jambes}
       <path d="M34 38 C18 40 14 56 10 70 C22 60 30 52 36 46Z" fill="${coul}"${contour} class="anim-queue"/>
@@ -192,24 +243,25 @@
   }
 
   function quadrupede(x, y, s, type, o = {}) {
+    const coul = { boeuf: "#7A4A2A", mouton: KAOLIN, chien: "#8A5A30" }[type], bord = ` stroke="${NOIR}" stroke-width="1.6"`;
     const [rx, ry, h] = { boeuf: [46, 18, 1.15], mouton: [30, 14, .8], chien: [30, 9, .7] }[type];
     const pattes = [-rx * .6, -rx * .35, rx * .45, rx * .7].map((px, i) =>
-      `<line x1="${px}" y1="0" x2="${px + (i % 2 ? 2 : -2)}" y2="${26 * h}" stroke="${OMBRE}" stroke-width="${type === "boeuf" ? 6 : 4}" stroke-linecap="round"/>`).join("");
+      `<line x1="${px}" y1="0" x2="${px + (i % 2 ? 2 : -2)}" y2="${26 * h}" stroke="${NOIR}" stroke-width="${type === "boeuf" ? 8.5 : 6.5}" stroke-linecap="round"/><line x1="${px}" y1="0" x2="${px + (i % 2 ? 2 : -2)}" y2="${26 * h}" stroke="${coul}" stroke-width="${type === "boeuf" ? 6 : 4}" stroke-linecap="round"/>`).join("");
     let tete;
-    if (type === "boeuf") tete = `<path d="M${rx - 6} -10 L${rx + 22} -14 L${rx + 26} 2 L${rx + 4} 6Z" fill="${OMBRE}"/><path d="M${rx + 8} -14 Q${rx - 2} -40 ${rx + 14} -44 M${rx + 16} -14 Q${rx + 34} -38 ${rx + 24} -46" stroke="${OMBRE}" stroke-width="4" fill="none"/><path d="M-6 -${ry} q14 -14 26 0Z" fill="${OMBRE}"/>`;
-    else if (type === "mouton") tete = `<ellipse cx="${rx + 6}" cy="-6" rx="10" ry="7" fill="${OMBRE}"/><path d="M${rx} -12 q-8 4 -4 10" stroke="${OMBRE}" stroke-width="3" fill="none"/>`;
-    else tete = `<g class="anim-aboie"><path d="M${rx - 6} -4 L${rx + 4} -18 L${rx + 20} -14 L${rx + 18} -6 L${rx + 4} -2Z" fill="${OMBRE}"/><path d="M${rx + 2} -16 L${rx + 4} -26 L${rx + 9} -16Z" fill="${OMBRE}"/></g><path d="M${-rx} -4 q-12 -8 -8 -20" stroke="${OMBRE}" stroke-width="4" fill="none"/>`;
+    if (type === "boeuf") tete = `<path d="M${rx - 6} -10 L${rx + 22} -14 L${rx + 26} 2 L${rx + 4} 6Z" fill="${coul}"${bord}/><path d="M${rx + 8} -14 Q${rx - 2} -40 ${rx + 14} -44 M${rx + 16} -14 Q${rx + 34} -38 ${rx + 24} -46" stroke="${OMBRE}" stroke-width="4" fill="none"/><path d="M-6 -${ry} q14 -14 26 0Z" fill="${coul}"${bord}/>`;
+    else if (type === "mouton") tete = `<ellipse cx="${rx + 6}" cy="-6" rx="10" ry="7" fill="${coul}"${bord}/><path d="M${rx} -12 q-8 4 -4 10" stroke="${OMBRE}" stroke-width="3" fill="none"/>`;
+    else tete = `<g class="anim-aboie"><path d="M${rx - 6} -4 L${rx + 4} -18 L${rx + 20} -14 L${rx + 18} -6 L${rx + 4} -2Z" fill="${coul}"${bord}/><path d="M${rx + 2} -16 L${rx + 4} -26 L${rx + 9} -16Z" fill="${coul}"${bord}/></g><path d="M${-rx} -4 q-12 -8 -8 -20" stroke="${OMBRE}" stroke-width="4" fill="none"/>`;
     const corps = type === "mouton"
-      ? `<ellipse cx="0" cy="0" rx="${rx}" ry="${ry}" fill="${OMBRE}"/><circle cx="-16" cy="-10" r="9" fill="${OMBRE}"/><circle cx="2" cy="-13" r="9" fill="${OMBRE}"/><circle cx="18" cy="-9" r="8" fill="${OMBRE}"/>`
-      : `<ellipse cx="0" cy="0" rx="${rx}" ry="${ry}" fill="${OMBRE}"/>`;
+      ? `<ellipse cx="0" cy="0" rx="${rx}" ry="${ry}" fill="${coul}"${bord}/><circle cx="-16" cy="-10" r="9" fill="${coul}"${bord}/><circle cx="2" cy="-13" r="9" fill="${coul}"${bord}/><circle cx="18" cy="-9" r="8" fill="${coul}"${bord}/>`
+      : `<ellipse cx="0" cy="0" rx="${rx}" ry="${ry}" fill="${coul}"${bord}/>`;
     return g(`translate(${x} ${(y - 26 * h * s).toFixed(1)}) scale(${o.flip ? -s : s} ${s})`, pattes + corps + tete, o.cls);
   }
 
   function coq(x, y, s = 1, o = {}) {
     return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`,
       `<line x1="-2" y1="-14" x2="-4" y2="0" stroke="${OMBRE}" stroke-width="2.5"/><line x1="4" y1="-14" x2="5" y2="0" stroke="${OMBRE}" stroke-width="2.5"/>
-       <ellipse cx="0" cy="-22" rx="14" ry="10" fill="${OMBRE}"/><path d="M-12 -24 Q-30 -46 -16 -52 Q-22 -36 -6 -30Z" fill="${OMBRE}"/>
-       <g class="anim-picore"><circle cx="12" cy="-36" r="6" fill="${OMBRE}"/><path d="M9 -42 l3 -6 l3 6 l3 -5 l1 6Z" fill="${o.crete || OMBRE}"/><path d="M17 -36 l6 2 l-6 2Z" fill="${OMBRE}"/></g>`, o.cls);
+       <ellipse cx="0" cy="-22" rx="14" ry="10" fill="#8A4A20" stroke="${NOIR}" stroke-width="1.4"/><path d="M-12 -24 Q-30 -46 -16 -52 Q-22 -36 -6 -30Z" fill="${NOIR}"/>
+       <g class="anim-picore"><circle cx="12" cy="-36" r="6" fill="#8A4A20" stroke="${NOIR}" stroke-width="1.2"/><path d="M9 -42 l3 -6 l3 6 l3 -5 l1 6Z" fill="${o.crete || ROUGE}"/><path d="M17 -36 l6 2 l-6 2Z" fill="${OMBRE}"/></g>`, o.cls);
   }
   const poulet = (x, y, s = 1) => coq(x, y, s, { crete: ROUGE });
 
@@ -271,23 +323,25 @@
 
   // lièvre : (x, y) = au sol, tourné vers la droite
   function lievre(x, y, s = 1, o = {}) {
+    const gris = "#8A6A4E", bord = ` stroke="${NOIR}" stroke-width="1.4"`;
     const corps = o.pose === "court"
-      ? `<ellipse cx="0" cy="-24" rx="30" ry="13" fill="${OMBRE}"/><line x1="18" y1="-16" x2="36" y2="-6" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/><line x1="-18" y1="-16" x2="-40" y2="-4" stroke="${OMBRE}" stroke-width="6" stroke-linecap="round"/>
-         <circle cx="30" cy="-36" r="10" fill="${OMBRE}"/><ellipse cx="22" cy="-58" rx="5" ry="18" fill="${OMBRE}" transform="rotate(-50 22 -46)"/><ellipse cx="28" cy="-60" rx="5" ry="18" fill="${OMBRE}" transform="rotate(-36 28 -48)"/>`
-      : `<ellipse cx="-6" cy="-22" rx="22" ry="20" fill="${OMBRE}"/><ellipse cx="-14" cy="-6" rx="18" ry="7" fill="${OMBRE}"/><line x1="10" y1="-16" x2="14" y2="0" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>
-         <circle cx="12" cy="-44" r="11" fill="${OMBRE}"/><ellipse cx="6" cy="-74" rx="5" ry="20" fill="${OMBRE}" transform="rotate(-10 6 -56)"/><ellipse cx="16" cy="-72" rx="5" ry="19" fill="${OMBRE}" transform="rotate(12 16 -54)"/>`;
+      ? `<ellipse cx="0" cy="-24" rx="30" ry="13" fill="${gris}"${bord}/><line x1="18" y1="-16" x2="36" y2="-6" stroke="${gris}" stroke-width="5" stroke-linecap="round"/><line x1="-18" y1="-16" x2="-40" y2="-4" stroke="${gris}" stroke-width="6" stroke-linecap="round"/>
+         <circle cx="30" cy="-36" r="10" fill="${gris}"${bord}/><ellipse cx="22" cy="-58" rx="5" ry="18" fill="${gris}"${bord} transform="rotate(-50 22 -46)"/><ellipse cx="28" cy="-60" rx="5" ry="18" fill="${gris}"${bord} transform="rotate(-36 28 -48)"/>`
+      : `<ellipse cx="-6" cy="-22" rx="22" ry="20" fill="${gris}"${bord}/><ellipse cx="-14" cy="-6" rx="18" ry="7" fill="${gris}"${bord}/><line x1="10" y1="-16" x2="14" y2="0" stroke="${gris}" stroke-width="5" stroke-linecap="round"/>
+         <circle cx="12" cy="-44" r="11" fill="${gris}"${bord}/><ellipse cx="6" cy="-74" rx="5" ry="20" fill="${gris}"${bord} transform="rotate(-10 6 -56)"/><ellipse cx="16" cy="-72" rx="5" ry="19" fill="${gris}"${bord} transform="rotate(12 16 -54)"/>`;
     const queue = o.pose === "court" ? `<circle cx="-30" cy="-30" r="5" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="1.5"/>` : `<circle cx="-28" cy="-16" r="5" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="1.5"/>`;
-    const oeil = o.pose === "court" ? `<circle cx="34" cy="-38" r="2" fill="${KAOLIN}"/>` : `<circle cx="16" cy="-46" r="2" fill="${KAOLIN}"/>`;
+    const oeil = o.pose === "court" ? `<circle cx="34" cy="-38" r="2" fill="${NOIR}"/>` : `<circle cx="16" cy="-46" r="2" fill="${NOIR}"/>`;
     return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, `<g class="${o.anim || ""}">${corps}${queue}${oeil}</g>`, o.cls);
   }
 
   // biche : (x, y) = sabots au sol, tournée vers la droite
   function biche(x, y, s = 1, o = {}) {
-    const pattes = [-22, -14, 14, 22].map((px) => `<line x1="${px}" y1="-44" x2="${px + (px < 0 ? -2 : 2)}" y2="0" stroke="${OMBRE}" stroke-width="3.5" stroke-linecap="round"/>`).join("");
+    const fauve = "#B07A45", bord = ` stroke="${NOIR}" stroke-width="1.5"`;
+    const pattes = [-22, -14, 14, 22].map((px) => trait(px, -44, px + (px < 0 ? -2 : 2), 0, fauve, 3.5)).join("");
     return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`,
-      `${pattes}<ellipse cx="0" cy="-48" rx="30" ry="12" fill="${OMBRE}"/><path d="M20 -54 L32 -84 L40 -82 L34 -50Z" fill="${OMBRE}"/>
-       <path d="M30 -84 L50 -80 L48 -74 L34 -76Z" fill="${OMBRE}"/><path d="M33 -86 L30 -98 L38 -88Z" fill="${OMBRE}"/>
-       <path d="M-28 -54 L-36 -60 L-32 -48Z" fill="${OMBRE}"/><circle cx="40" cy="-80" r="1.6" fill="${KAOLIN}"/>`, o.cls);
+      `${pattes}<ellipse cx="0" cy="-48" rx="30" ry="12" fill="${fauve}"${bord}/><path d="M20 -54 L32 -84 L40 -82 L34 -50Z" fill="${fauve}"${bord}/>
+       <path d="M30 -84 L50 -80 L48 -74 L34 -76Z" fill="${fauve}"${bord}/><path d="M33 -86 L30 -98 L38 -88Z" fill="${fauve}"${bord}/>
+       <path d="M-28 -54 L-36 -60 L-32 -48Z" fill="${fauve}"${bord}/><circle cx="40" cy="-80" r="1.6" fill="${KAOLIN}"/>`, o.cls);
   }
 
   // essaim de guêpes, du trou vers la gauche
