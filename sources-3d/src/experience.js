@@ -233,10 +233,15 @@ const zoneEtiquettes = $("#etiquettes");
 zoneEtiquettes.innerHTML = carte.etiquettes.map((x) => `<span>${echapper(x.nom)}</span>`).join("");
 const spans = [...zoneEtiquettes.children];
 const vTmp = new THREE.Vector3();
-function placerEtiquettes(montrer) {
+// seule : pendant l'arrivée sur un conte, on ne montre que le nom de sa région
+function placerEtiquettes(montrer, seule = null) {
   zoneEtiquettes.classList.toggle("visible", montrer);
+  zoneEtiquettes.classList.toggle("une", !!seule);
   if (!montrer) return;
   carte.etiquettes.forEach((x, i) => {
+    const garder = !seule || x.nom === seule;
+    spans[i].classList.toggle("cachee", !garder);
+    if (!garder) return;
     vTmp.copy(x.pos).project(camera);
     spans[i].style.transform = `translate(${(vTmp.x * .5 + .5) * innerWidth}px, ${(-vTmp.y * .5 + .5) * innerHeight}px) translate(-50%, -50%)`;
   });
@@ -245,6 +250,7 @@ function placerEtiquettes(montrer) {
 const rayon = new THREE.Raycaster(), souris = new THREE.Vector2();
 const bulle = $("#bulle-region");
 const contesDe = (region) => VOYAGE.filter((id) => parId(id).region === region);
+const regionDuConte = Object.fromEntries(VOYAGE.map((id) => [id, carte.regions.find((m) => m.userData.region.nom === parId(id).region)]));
 const vHaut = new THREE.Vector3();
 let bulleFixe = false;
 
@@ -481,7 +487,9 @@ function boucle() {
   else if (sceneAffichee === "carte") carte.animer(t, dt);
   else { decors.animer(t, dt); decors.suivreCamera(camera); }
   if (sceneAffichee !== "carte" && !bulle.hidden) fermerBulle();
-  placerEtiquettes(sceneAffichee === "carte" && !e.conte && !enTransition);
+  // à l'arrivée sur un conte, sa région est mise en avant, comme au survol
+  if (sceneAffichee === "carte" && bulle.hidden) carte.survoler(e.conte && !enTransition ? regionDuConte[e.conte] : null);
+  placerEtiquettes(sceneAffichee === "carte" && !enTransition, e.conte ? parId(e.conte).region : null);
   rendu.render(SCENES[sceneAffichee], camera);
 }
 

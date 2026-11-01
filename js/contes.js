@@ -60,7 +60,7 @@ window.CONTES = [
     lat: 12.37, lon: -1.52,
     langue: "moore",
     ambiance: "cour",
-    voix: [], // langues déjà enregistrées, par exemple ["moore", "francais"]
+    voix: ["moore"], // langues déjà enregistrées, par exemple ["moore", "francais"]
     resume: "Chaque vendredi, un roi fait mine de partir en guerre, et choisit la paix.",
     scenes: [
       { decor: "aube", sol: "cour", elements: ["ministres"],
@@ -376,10 +376,12 @@ window.NARRATION = [
   "ouverture-3",
   "ouverture-4",
   "carte-1",
+  "carte-2",
   "faux-depart-titre",
   "faux-depart-1",
   "faux-depart-2",
   "faux-depart-3",
   "faux-depart-4",
   "faux-depart-5",
+  "faux-depart-fin",
 ];

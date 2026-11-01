@@ -64,6 +64,8 @@ body.verrou { overflow: hidden; }
 .voile.visible { opacity: 1; }
 .etiquettes { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .4s; }
 .etiquettes.visible { opacity: 1; }
+.etiquettes span.cachee { opacity: 0; }
+.etiquettes.une span { font-size: .95rem; font-weight: 800; }
 .etiquettes span {
   position: absolute; left: 0; top: 0; white-space: nowrap;
   font: 700 .66rem var(--titre); color: var(--noir); transition: opacity .3s;
