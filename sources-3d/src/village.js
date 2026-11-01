@@ -1,6 +1,7 @@
 // La concession de Tiébélé, de nuit, autour du feu de la veillée.
 import * as THREE from "three";
-import { NOIR, KAOLIN, OCRE, JAUNE, texturePeinte, textureFlamme, texturePoint, textureAnneaux, textureFrise } from "./textures.js";
+import { NOIR, KAOLIN, OCRE, JAUNE, ROUGE, texturePeinte, textureFlamme, texturePoint, textureAnneaux, textureFrise } from "./textures.js";
+import { personneAssise, conteur as creerConteur, natte, animerPersonnes, TISSUS } from "./personnages.js";
 
 export function creerFeu(scene, echelle = 1, avecBraises = true, force = 24, portee = 26) {
   const groupe = new THREE.Group();
@@ -117,18 +118,6 @@ function maisonCarree(l, p, h, variante) {
   return g;
 }
 
-function personneAssise(mat) {
-  const g = new THREE.Group();
-  const corps = new THREE.Mesh(new THREE.ConeGeometry(.28, .7, 10), mat);
-  corps.position.y = .35;
-  const tete = new THREE.Mesh(new THREE.SphereGeometry(.13, 12, 10), mat);
-  tete.position.y = .82;
-  const jambes = new THREE.Mesh(new THREE.CylinderGeometry(.32, .36, .14, 12), mat);
-  jambes.position.y = .07;
-  g.add(corps, tete, jambes);
-  return g;
-}
-
 export function creerVillage() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(NOIR);
@@ -172,23 +161,41 @@ export function creerVillage() {
   scene.add(enceinte);
 
   // les auditeurs, assis autour du feu, et le conteur debout
-  const matOmbre = new THREE.MeshStandardMaterial({ color: NOIR, roughness: 1 });
-  [[-1.9, .9], [-1.2, 1.9], [.4, 2.2], [1.7, 1.4], [2.1, -.3], [-2.2, -.6]].forEach(([x, z]) => {
-    const p = personneAssise(matOmbre);
+  const conteur = creerConteur({ habit: TISSUS[3]() });
+  conteur.position.set(-1.35, 0, -1.7);
+  conteur.lookAt(.9, 0, 1.6);
+  scene.add(conteur);
+  const tapis = natte(1.3, .8);
+  tapis.position.set(-.72, .012, 2.05); tapis.rotation.z = .35;
+  scene.add(tapis);
+  const kaolinBonnet = new THREE.MeshStandardMaterial({ color: KAOLIN, roughness: .9 });
+  const rougeBonnet = new THREE.MeshStandardMaterial({ color: ROUGE, roughness: .9 });
+  const auditeurs = [
+    { x: -1.9, z: .8, o: { siege: "tabouret", coiffe: "bonnet", matCoiffe: rougeBonnet, pose: "genoux", habit: TISSUS[0](), peau: "#4B2C1B" } },
+    { x: -1.05, z: 1.95, o: { siege: "sol", femme: true, coiffe: "foulard", pose: "genoux", habit: TISSUS[1](), bas: TISSUS[5](), peau: "#5C3722" } },
+    { x: -.35, z: 2.2, e: .62, o: { siege: "sol", pose: "bras", habit: TISSUS[4](), peau: "#6A4029" } },
+    { x: .65, z: 2.1, o: { siege: "tabouret", coiffe: "bonnet", matCoiffe: kaolinBonnet, pose: "menton", habit: TISSUS[2](), peau: "#3E2416" } },
+    { x: 1.75, z: 1.3, o: { siege: "tabouret", femme: true, coiffe: "foulard", pose: "genoux", habit: TISSUS[4](), bas: TISSUS[0](), peau: "#4B2C1B" } },
+    { x: 2.2, z: .15, e: .6, o: { siege: "sol", pose: "bras", habit: TISSUS[1](), peau: "#5C3722" } },
+    { x: -2.2, z: -.75, o: { siege: "tabouret", pose: "genoux", habit: TISSUS[5](), peau: "#6A4029" } },
+  ];
+  const personnes = [conteur];
+  auditeurs.forEach(({ x, z, e = 1, o }) => {
+    const p = personneAssise(o);
     p.position.set(x, 0, z);
+    p.scale.setScalar(e);
+    p.userData.echelle = e;
     p.lookAt(0, 0, 0);
     scene.add(p);
+    // la tête se tourne vers le conteur
+    p.updateMatrixWorld();
+    const v = p.worldToLocal(conteur.position.clone().setY(1.5));
+    p.userData.regard = THREE.MathUtils.clamp(Math.atan2(v.x, v.z), -.75, .75);
+    personnes.push(p);
   });
-  const conteur = new THREE.Group();
-  const robe = new THREE.Mesh(new THREE.ConeGeometry(.34, 1.5, 12), matOmbre); robe.position.y = .75;
-  const tete = new THREE.Mesh(new THREE.SphereGeometry(.15, 12, 10), matOmbre); tete.position.y = 1.66;
-  const baton = new THREE.Mesh(new THREE.CylinderGeometry(.025, .025, 1.9, 6), matOmbre); baton.position.set(.32, .95, 0); baton.rotation.z = -.08;
-  conteur.add(robe, tete, baton);
-  conteur.position.set(-.6, 0, -2.1);
-  conteur.lookAt(0, 0, 2);
-  scene.add(conteur);
 
   // arbre au fond
+  const matOmbre = new THREE.MeshStandardMaterial({ color: NOIR, roughness: 1 });
   const tronc = new THREE.Mesh(new THREE.CylinderGeometry(.5, .9, 4.5, 10), matOmbre);
   tronc.position.set(-9, 2.25, -9);
   scene.add(tronc);
@@ -204,11 +211,12 @@ export function creerVillage() {
   const cles = [
     { p: 0, pos: [-4, 11, 24], vise: [-6.5, 1.5, 0] },
     { p: .35, pos: [7, 5, 12], vise: [0, 1, 0] },
-    { p: .7, pos: [2.2, 1.7, 4.4], vise: [0, 1.1, 0] },
+    { p: .6, pos: [2.4, 1.5, 4.2], vise: [-.9, 1, -.6] },
+    { p: .82, pos: [1.5, 1.2, 3.3], vise: [-1.3, 1.15, -1.6] },
     { p: 1, pos: [.8, 2.4, 2.6], vise: [0, 14, -2] },
   ];
   return {
     scene, cles,
-    animer(t, dt) { feu.animer(t, dt); etoiles.rotation.y = t * .004; },
+    animer(t, dt) { feu.animer(t, dt); etoiles.rotation.y = t * .004; animerPersonnes(personnes, t); },
   };
 }
