@@ -54,7 +54,7 @@ VOYAGE.forEach((id, n) => {
 });
 
 // menu des contes
-$("#menu-liste").innerHTML = VOYAGE.map((id, n) => `<li><a href="#c-${id}"><span>${n + 1}</span>${echapper(parId(id).titre)}</a></li>`).join("");
+$("#menu-liste").innerHTML = VOYAGE.map((id, n) => `<li><a href="#c-${id}"><span>${n + 1}</span><b>${echapper(parId(id).titre)} <em>(${echapper(parId(id).region)})</em></b></a></li>`).join("");
 const menu = $("#menu-contes"), boutonMenu = $("#bouton-menu");
 function fermerMenu() { menu.hidden = true; boutonMenu.setAttribute("aria-expanded", "false"); }
 boutonMenu.addEventListener("click", () => { const o = menu.hidden; menu.hidden = !o; boutonMenu.setAttribute("aria-expanded", String(o)); });
@@ -64,7 +64,7 @@ document.addEventListener("click", (e) => { if (!menu.hidden && !e.target.closes
 // sections de fin : régions, lexique, sources
 $("#grille-regions").innerHTML = CARTE.regions.map((r) => `<div><dt>${echapper(r.nom)}${r.chefLieu ? `<span>${echapper(r.chefLieu)}</span>` : ""}</dt><dd>${echapper(r.sens)}</dd></div>`).join("");
 $("#liste-lexique").innerHTML = window.LEXIQUE.map((m) => `<div><dt>${echapper(m.mot)}<span>${echapper(m.langue)}</span></dt><dd>${echapper(m.sens)}</dd></div>`).join("");
-const lien = (s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${echapper(s.titre)}</a></li>`;
+const lien = (s) => s.url ? `<li><a href="${s.url}" target="_blank" rel="noopener">${echapper(s.titre)}</a></li>` : `<li>${echapper(s.titre)}</li>`;
 $("#liste-sources").innerHTML = CONTES.map((c) => `<div><h3>${echapper(c.titre)}</h3><ul>${c.sources.map(lien).join("")}</ul></div>`).join("")
   + `<div><h3>La cour royale de Tiébélé</h3><ul>${(window.SOURCES_TIEBELE || []).map(lien).join("")}</ul></div>`
   + `<div><h3>Carte et noms des régions</h3><ul>${window.SOURCES_GENERALES.map(lien).join("")}</ul></div>`;
@@ -241,25 +241,94 @@ function placerEtiquettes(montrer) {
     spans[i].style.transform = `translate(${(vTmp.x * .5 + .5) * innerWidth}px, ${(-vTmp.y * .5 + .5) * innerHeight}px) translate(-50%, -50%)`;
   });
 }
+// Sur la carte, on peut aussi choisir son conte : un clic sur un feu, ou sur une région qui a un conte.
 const rayon = new THREE.Raycaster(), souris = new THREE.Vector2();
 const bulle = $("#bulle-region");
-function survol(ev) {
-  const cache = sceneAffichee !== "carte" || window.Lecteur.estOuvert() || !(ev.target instanceof Element) || ev.target.closest(".cartel, .entete, .apres, .entree");
-  if (cache) { bulle.hidden = true; carte.survoler(null); return; }
+const contesDe = (region) => VOYAGE.filter((id) => parId(id).region === region);
+const vHaut = new THREE.Vector3();
+let bulleFixe = false;
+
+// feu sous le pointeur, en comparant les distances à l'écran
+function feuSous(x, y) {
+  let meilleur = null, dmin = Infinity;
+  for (const id of VOYAGE) {
+    const l = carte.lieux[id];
+    vTmp.copy(l).setY(l.y + .12).project(camera);
+    vHaut.copy(l).setY(l.y + .42).project(camera);
+    const px = (vTmp.x * .5 + .5) * innerWidth, py = (-vTmp.y * .5 + .5) * innerHeight;
+    const rayonPx = Math.max(20, Math.abs(vHaut.y - vTmp.y) * .5 * innerHeight * 1.1);
+    const d = Math.hypot(px - x, py - y);
+    if (d < rayonPx && d < dmin) { dmin = d; meilleur = id; }
+  }
+  return meilleur;
+}
+function viser(ev) {
+  if (sceneAffichee !== "carte" || window.Lecteur.estOuvert() || !(ev.target instanceof Element) || ev.target.closest(".cartel, .entete, .apres, .entree, .bulle-region")) return null;
+  const feu = feuSous(ev.clientX, ev.clientY);
   souris.set(ev.clientX / innerWidth * 2 - 1, -ev.clientY / innerHeight * 2 + 1);
   rayon.setFromCamera(souris, camera);
   const t = rayon.intersectObjects(carte.regions, false)[0];
-  carte.survoler(t ? t.object : null);
-  if (!t) { bulle.hidden = true; return; }
-  const r = t.object.userData.region;
-  bulle.innerHTML = `<strong>${echapper(r.nom)}</strong>${r.chefLieu ? `<em>Chef-lieu : ${echapper(r.chefLieu)}</em>` : ""}<span>${echapper(r.sens)}</span>`;
-  bulle.hidden = false;
-  bulle.style.left = Math.max(8, Math.min(ev.clientX + 16, innerWidth - bulle.offsetWidth - 8)) + "px";
-  bulle.style.top = Math.max(60, Math.min(ev.clientY + 16, innerHeight - bulle.offsetHeight - 8)) + "px";
+  const region = feu ? carte.regions.find((m) => m.userData.region.nom === parId(feu).region) : t && t.object;
+  return region || feu ? { feu, region } : null;
 }
-addEventListener("pointermove", survol);
-addEventListener("pointerdown", survol);
-addEventListener("scroll", () => { if (!bulle.hidden) { bulle.hidden = true; carte.survoler(null); } }, { passive: true });
+function placerBulle(x, y) {
+  bulle.hidden = false;
+  bulle.style.left = Math.max(8, Math.min(x + 16, innerWidth - bulle.offsetWidth - 8)) + "px";
+  bulle.style.top = Math.max(60, Math.min(y + 16, innerHeight - bulle.offsetHeight - 8)) + "px";
+}
+function fermerBulle() {
+  bulleFixe = false;
+  bulle.hidden = true;
+  bulle.classList.remove("fixe");
+  bulle.setAttribute("aria-hidden", "true");
+  carte.survoler(null);
+  document.body.style.cursor = "";
+}
+const ligneConte = (id) => { const c = parId(id); return `<span class="conte-ici">Conte ${VOYAGE.indexOf(id) + 1} : ${echapper(c.titre)}</span>`; };
+function survol(ev) {
+  if (bulleFixe) return;
+  const v = viser(ev);
+  if (!v) { if (!bulle.hidden) fermerBulle(); return; }
+  carte.survoler(v.region || null);
+  if (v.feu) {
+    const c = parId(v.feu);
+    bulle.innerHTML = `<strong>${echapper(c.titre)}</strong><em>${echapper(c.genre)}, ${echapper(c.lieu)}, région du ${echapper(c.region)}</em><span>${echapper(c.resume)}</span><span class="action">Cliquez pour commencer ce conte.</span>`;
+    document.body.style.cursor = "pointer";
+  } else {
+    const r = v.region.userData.region, ici = contesDe(r.nom);
+    bulle.innerHTML = `<strong>${echapper(r.nom)}</strong>${r.chefLieu ? `<em>Chef-lieu : ${echapper(r.chefLieu)}</em>` : ""}<span>${echapper(r.sens)}</span>`
+      + ici.map(ligneConte).join("") + (ici.length ? `<span class="action">Cliquez pour commencer ${ici.length > 1 ? "un de ces contes" : "ce conte"}.</span>` : "");
+    document.body.style.cursor = ici.length ? "pointer" : "";
+  }
+  placerBulle(ev.clientX, ev.clientY);
+}
+let typePointeur = "mouse";
+addEventListener("pointerdown", (ev) => { typePointeur = ev.pointerType || "mouse"; }, true);
+addEventListener("pointermove", (ev) => { if (ev.pointerType === "mouse") survol(ev); });
+addEventListener("scroll", () => { if (!bulle.hidden) fermerBulle(); }, { passive: true });
+
+// clic sur la carte : un feu lance son conte ; une région propose ses contes
+addEventListener("click", (ev) => {
+  const bouton = ev.target instanceof Element && ev.target.closest("[data-aller]");
+  if (bouton) { const id = bouton.dataset.aller; fermerBulle(); allerA($("#c-" + id)); return; }
+  if (bulleFixe && ev.target instanceof Element && ev.target.closest(".bulle-region")) return;
+  const v = viser(ev);
+  if (!v) { if (bulleFixe) fermerBulle(); return; }
+  const tactile = typePointeur !== "mouse";
+  if (v.feu && !tactile) { fermerBulle(); allerA($("#c-" + v.feu)); return; }
+  const r = v.region.userData.region, ici = v.feu ? [v.feu] : contesDe(r.nom);
+  if (ici.length === 1 && !tactile) { fermerBulle(); allerA($("#c-" + ici[0])); return; }
+  // au doigt, ou s'il y a plusieurs contes : on affiche la région et un bouton par conte
+  carte.survoler(v.region);
+  bulle.innerHTML = `<strong>${echapper(r.nom)}</strong>${r.chefLieu ? `<em>Chef-lieu : ${echapper(r.chefLieu)}</em>` : ""}<span>${echapper(r.sens)}</span>`
+    + (ici.length ? ici.map((id) => `<button type="button" class="bouton-feu" data-aller="${id}">Écouter : ${echapper(parId(id).titre)}</button>`).join("") : `<span class="action">Pas encore de conte dans cette région.</span>`);
+  bulle.classList.add("fixe");
+  bulle.setAttribute("aria-hidden", "false");
+  bulleFixe = true;
+  placerBulle(ev.clientX, ev.clientY);
+  document.body.style.cursor = "";
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && bulleFixe) fermerBulle(); });
 
 // ---------------------------------------------------------------- sons d'ambiance
 // Chaque ambiance passe par un gain Web Audio : les fondus marchent aussi sur iPhone.
@@ -373,6 +442,7 @@ function boucle() {
   if (sceneAffichee === "village") village.animer(t, dt);
   else if (sceneAffichee === "carte") carte.animer(t, dt);
   else { decors.animer(t, dt); decors.suivreCamera(camera); }
+  if (sceneAffichee !== "carte" && !bulle.hidden) fermerBulle();
   placerEtiquettes(sceneAffichee === "carte" && !e.conte && !enTransition);
   rendu.render(SCENES[sceneAffichee], camera);
 }

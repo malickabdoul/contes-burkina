@@ -2,7 +2,7 @@
 
 Plateforme web multimédia sur les contes et légendes du Burkina Faso.
 
-On entre de nuit dans une cour peinte de Tiébélé, en 3D, autour du feu. Puis on survole la carte des 17 régions en relief. On voyage d'un feu à l'autre pour écouter sept contes, scène par scène, dans des décors à plusieurs plans. Tout avance au défilement de la page, avec des ambiances sonores et des voix en langues nationales.
+On entre de nuit dans une cour peinte de Tiébélé, en 3D, autour du feu. Puis on survole la carte des 17 régions en relief. On voyage d'un feu à l'autre pour écouter neuf contes, scène par scène, dans des décors à plusieurs plans. Tout avance au défilement de la page, avec des ambiances sonores et des voix en langues nationales.
 
 Projet Web Multimédia, Master 1 Informatique, IBAM, 2026.
 Groupe : OUOBA Youmanli William Arnaud, OUEDRAOGO Pégué Judicaël, NIKIEMA Abdoul Fatahou, KOMPAORE Abdoul Malick.
@@ -15,8 +15,8 @@ Groupe : OUOBA Youmanli William Arnaud, OUEDRAOGO Pégué Judicaël, NIKIEMA Abd
 ## Ce que contient le site
 
 - La cour royale de Tiébélé en 3D : maisons rondes et carrées peintes de motifs (le dora), feu, braises, ciel étoilé.
-- Une carte des 17 régions du Burkina Faso (découpage de juillet 2025), en relief, avec le sens du nom de chaque région au survol.
-- Sept récits : le faux départ du Moogho Naaba, Yennenga, Diaba Lompo, un conte peul, les crocodiles de Sabou, les silures de Dafra et les murs de Loropéni.
+- Une carte des 17 régions du Burkina Faso (découpage de juillet 2025), en relief, avec le sens du nom de chaque région au survol. Un clic sur un feu, ou sur une région, lance directement son conte.
+- Neuf récits : le faux départ du Moogho Naaba, Yennenga, Diaba Lompo, Yemboado, un conte peul, les crocodiles de Sabou, les silures de Dafra, l'Araignée et le Lièvre, et les murs de Loropéni.
 - Pour chaque récit : des décors en plusieurs plans qui glissent et se fondent d'une scène à l'autre, une ambiance sonore, des voix par langue, ce que le conte nous apprend, un petit quiz et les sources.
 - Un petit lexique (mooré, dioula, fulfulde, gulmancema) et la liste des sources.
 
@@ -69,7 +69,7 @@ npm run build
 
 1. Enregistrer le conte au téléphone, dans un endroit calme, en MP3 si possible (1 à 3 minutes).
 2. Nommer le fichier `<conte>-<langue>.mp3` et le mettre dans `audio/voix/`.
-   Contes : `yennenga`, `faux-depart`, `sabou`, `dafra`, `diaba-lompo`, `loropeni`, `petite-querelle`.
+   Contes : `yennenga`, `faux-depart`, `sabou`, `dafra`, `diaba-lompo`, `yemboado`, `loropeni`, `araignee`, `petite-querelle`.
    Langues : `moore`, `dioula`, `fulfulde`, `gulmancema`, `francais`.
    Exemple : `audio/voix/yennenga-moore.mp3`.
 3. Dans `js/contes.js`, ajouter la langue dans la liste `voix` du conte. Exemple : `voix: ["moore"]`.

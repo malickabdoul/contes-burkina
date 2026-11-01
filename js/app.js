@@ -128,7 +128,7 @@
       <li class="conte-item">
         <p class="genre">${echapper(c.genre)}</p>
         <h3>${echapper(c.titre)}</h3>
-        <p class="lieu">${echapper(c.lieu)}, région du ${echapper(c.region)}. Langue d'origine : ${LANGUES[c.langue]}</p>
+        <p class="lieu">${echapper(c.lieu)}, région du ${echapper(c.region)}</p>
         <p class="resume">${echapper(c.resume)}</p>
         <button type="button" class="bouton-discret petit ouvrir" data-id="${c.id}">Écouter le conte</button><span class="etat" data-etat="${c.id}">${lus.includes(c.id) ? "Déjà écouté" : ""}</span>
       </li>`).join("");
@@ -140,7 +140,7 @@
     $("#liste-lexique").innerHTML = window.LEXIQUE.map((m) =>
       `<div><dt>${echapper(m.mot)}<span>${echapper(m.langue)}</span></dt><dd>${echapper(m.sens)}</dd></div>`).join("");
 
-    const lien = (s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${echapper(s.titre)}</a></li>`;
+    const lien = (s) => s.url ? `<li><a href="${s.url}" target="_blank" rel="noopener">${echapper(s.titre)}</a></li>` : `<li>${echapper(s.titre)}</li>`;
     $("#liste-sources").innerHTML = CONTES.map((c) => `<div><h3>${echapper(c.titre)}</h3><ul>${c.sources.map(lien).join("")}</ul></div>`).join("")
       + `<div><h3>Carte et noms des régions</h3><ul>${window.SOURCES_GENERALES.map(lien).join("")}</ul></div>`;
   }

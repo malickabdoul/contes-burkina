@@ -97,6 +97,10 @@
       case "mare": return collines(c) + acacia(710, SOL - 40, .8) + solPres(c) + eau(id, 480, SOL + 26, 240, 26) + roseaux(238, SOL + 26) + roseaux(712, SOL + 30, 5);
       case "ravin": return collines(c) + rochers(-80, SOL + 14, 1) + rochers(880, SOL + 18, 1.05, true) + arbreRond(40, 250, .65) + arbreRond(770, 240, .7)
         + solPres(c) + eau(id, 400, SOL + 26, 230, 26);
+      case "baobab-genie": return collines(c) + acacia(110, SOL - 24, .8) + baobab(560, SOL - 6, 1.55)
+        + g("translate(560 " + (SOL - 50) + ")", `<path d="M-30 40 L-30 -6 Q0 -50 30 -6 L30 40Z" fill="${OCRE}" stroke="${KAOLIN}" stroke-width="3"/>`
+          + `<g class="anim-lueur"><ellipse cx="-11" cy="-2" rx="6" ry="4" fill="${JAUNE}"/><ellipse cx="11" cy="-2" rx="6" ry="4" fill="${JAUNE}"/></g>`)
+        + solPres(c) + `<path d="M120 ${SOL + 30} l30 10 l-10 18 M300 ${SOL + 40} l36 -6 l14 12 M660 ${SOL + 26} l26 14" stroke="${NOIR}" stroke-opacity=".5" fill="none" stroke-width="2"/>`;
       case "ciel-seul": return `<path d="M0 405 C200 390 600 395 800 402 L800 450 L0 450Z" fill="${c.terre}"/>`;
       case "rocher": return collines(c) + solPres(c) + `<path d="M500 ${SOL + 6} C510 ${SOL - 60} 580 ${SOL - 98} 660 ${SOL - 92} C730 ${SOL - 86} 778 ${SOL - 44} 790 ${SOL + 6}Z" fill="${c.roche}" stroke="${NOIR}" stroke-width="2.5"/>
         <path d="M540 ${SOL - 40} q40 -20 80 -6 M700 ${SOL - 60} q30 10 50 34" stroke="${NOIR}" stroke-opacity=".5" stroke-width="2.5" fill="none"/>` + herbes(SOL + 8, 6, 23);
@@ -139,7 +143,7 @@
     if (pose === "agenouille") {
       corps = `<circle cx="6" cy="-66" r="8" fill="${OMBRE}"/><path d="M-6 -58 L14 -58 L18 -24 L-10 -24Z" fill="${robe}" transform="rotate(${o.penche || 18} 4 -24)"/>
         <path d="M-12 -24 L18 -24 L22 0 L-18 0Z" fill="${robe}"/><line x1="10" y1="-50" x2="34" y2="-30" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>`;
-      const objet = o.objet === "poulet" ? poulet(38, -24, .6) : o.objet === "pinceau" ? `<line x1="34" y1="-30" x2="50" y2="-18" stroke="${OMBRE}" stroke-width="3"/>` : "";
+      const objet = o.objet === "poulet" ? poulet(38, -24, .6) : o.objet === "calebasse" ? calebasse(40, -26, .6) : o.objet === "pinceau" ? `<line x1="34" y1="-30" x2="50" y2="-18" stroke="${OMBRE}" stroke-width="3"/>` : "";
       return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, corps + objet, o.cls);
     }
     const marche = pose === "marche";
@@ -155,6 +159,7 @@
     if (o.objet === "arc") objet = `<path d="M${lx - 4} ${ly - 46} Q${lx + 26} ${ly} ${lx - 4} ${ly + 46}" fill="none" stroke="${OMBRE}" stroke-width="3"/><line x1="${lx - 4}" y1="${ly - 46}" x2="${lx - 4}" y2="${ly + 46}" stroke="${OMBRE}" stroke-width="1"/>`;
     if (o.objet === "baton") objet = `<line x1="${lx}" y1="${ly}" x2="${lx + 6}" y2="0" stroke="${OMBRE}" stroke-width="3"/>`;
     if (o.objet === "poulet") objet = poulet(lx + 8, ly + 8, .55);
+    if (o.objet === "calebasse") objet = calebasse(lx + 6, ly + 6, .55);
     const garniture = o.liseré ? `<path d="M-12 -80 L12 -80 L19 -30 L-19 -30Z" fill="none" stroke="${o.liseré}" stroke-width="2.5"/>` : "";
     corps = `${jambes}<g ${penche}><circle cx="0" cy="-90" r="8" fill="${OMBRE}"/>${tete}
       <path d="M-12 -80 L12 -80 L19 -30 L-19 -30Z" fill="${robe}"/>${garniture}
@@ -167,7 +172,11 @@
   function cheval(x, y, s = 1, o = {}) {
     const allure = o.allure || "galop";
     const arret = allure === "debout" ? "-arret" : "";
-    const jambe = (x1, y1, ang, cls) => `<g class="${cls}${arret}" style="transform-origin:${x1}px ${y1}px"><line x1="${x1}" y1="${y1}" x2="${(x1 + Math.sin(ang) * 32).toFixed(1)}" y2="${(y1 + Math.cos(ang) * 32).toFixed(1)}" stroke="${OMBRE}" stroke-width="6" stroke-linecap="round"/></g>`;
+    const coul = o.couleur || OMBRE, contour = o.couleur ? ` stroke="${NOIR}" stroke-width="2.5"` : "";
+    const jambe = (x1, y1, ang, cls) => {
+      const x2 = (x1 + Math.sin(ang) * 32).toFixed(1), y2 = (y1 + Math.cos(ang) * 32).toFixed(1);
+      return `<g class="${cls}${arret}" style="transform-origin:${x1}px ${y1}px">${o.couleur ? `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${NOIR}" stroke-width="10" stroke-linecap="round"/>` : ""}<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${coul}" stroke-width="6" stroke-linecap="round"/></g>`;
+    };
     const k = allure === "galop" ? 1 : allure === "pas" ? .4 : 0;
     const jambes = jambe(96, 54, .6 * k, "anim-patte-av") + jambe(88, 56, .2 * k, "anim-patte-av2") + jambe(48, 54, -.6 * k, "anim-patte-ar") + jambe(40, 52, -.2 * k, "anim-patte-ar2");
     const cavalier = o.cavalier ? `<g class="cavalier"><path d="M62 34 L70 6 L80 8 L74 36Z" fill="${o.robe || OMBRE}"/><circle cx="76" cy="-2" r="7" fill="${OMBRE}"/>
@@ -175,10 +184,10 @@
       <path d="M64 34 L58 58" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>
       ${o.lance ? `<line x1="60" y1="40" x2="128" y2="-16" stroke="${OMBRE}" stroke-width="3"/><path d="M134 -21 L122 -16 L128 -10Z" fill="${OMBRE}"/>` : ""}</g>` : "";
     const corps = `<g class="${allure === "galop" ? "anim-galop" : allure === "pas" ? "anim-pas" : ""}">${jambes}
-      <ellipse cx="70" cy="44" rx="38" ry="16" fill="${OMBRE}"/>
-      <path d="M92 36 L106 10 L114 6 L130 16 L128 24 L114 22 L106 48Z" fill="${OMBRE}"/><path d="M110 8 L112 -2 L116 7Z" fill="${OMBRE}"/>
-      <path d="M100 14 L94 26 L104 22 L98 34 L106 28Z" fill="${OMBRE}"/>
-      <path d="M34 38 C18 40 14 56 10 70 C22 60 30 52 36 46Z" fill="${OMBRE}" class="anim-queue"/>${cavalier}</g>`;
+      <path d="M34 38 C18 40 14 56 10 70 C22 60 30 52 36 46Z" fill="${coul}"${contour} class="anim-queue"/>
+      <path d="M92 36 L106 10 L114 6 L130 16 L128 24 L114 22 L106 48Z" fill="${coul}"${contour}/><path d="M110 8 L112 -2 L116 7Z" fill="${coul}"${contour}/>
+      <ellipse cx="70" cy="44" rx="38" ry="16" fill="${coul}"${contour}/>
+      <path d="M100 14 L94 26 L104 22 L98 34 L106 28Z" fill="${OMBRE}"/>${cavalier}</g>`;
     return g(`translate(${x} ${(y - 86 * s).toFixed(1)}) scale(${o.flip ? -s : s} ${s})`, corps, o.cls);
   }
 
@@ -236,6 +245,59 @@
       <path d="M-40 -40 C-40 -60 -20 -60 -10 -74 C0 -60 20 -58 40 -50 L56 -80 L66 -84 L74 -78 L70 -74 L62 -74 L50 -42 C30 -36 -20 -34 -40 -40Z" fill="${OMBRE}"/>
       ${o.cavalier ? `<circle cx="-10" cy="-96" r="7" fill="${OMBRE}"/><path d="M-18 -74 L-2 -74 L-6 -90 L-14 -90Z" fill="${OMBRE}"/>` : ""}
       ${o.charge ? `<rect x="10" y="-70" width="22" height="16" rx="4" fill="${JAUNE}"/>` : ""}</g>`, o.cls);
+  }
+
+  // calebasse : (x, y) = posée au sol ; o.to = remplie de tô ; o.fumee = encore chaude
+  function calebasse(x, y, s = 1, o = {}) {
+    return g(`translate(${x} ${y}) scale(${s})`,
+      (o.to ? `<path d="M-19 -16 Q0 -38 19 -16Z" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="2.5"/>` : "")
+      + `<path d="M-26 -16 Q-24 0 0 0 Q24 0 26 -16Z" fill="${OCRE}" stroke="${NOIR}" stroke-width="2.5"/>`
+      + (o.fumee ? g("translate(0 -40) scale(.7)", [0, 1, 2].map((i) => `<circle cx="${i * 6 - 6}" cy="0" r="12" fill="${KAOLIN}" class="anim-fumee" style="animation-delay:${i * .9}s"/>`).join("")) : ""));
+  }
+
+  // araignée : (x, y) = pattes au sol ; o.sac = sac sur le dos ; o.piqures = couverte de piqûres
+  function araignee(x, y, s = 1, o = {}) {
+    let pattes = "";
+    for (let i = 0; i < 4; i++) {
+      pattes += `<path d="M10 -40 L${34 + i * 10} ${-70 + i * 6} L${44 + i * 16} 0" stroke="${OMBRE}" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+      pattes += `<path d="M-6 -40 L${-26 - i * 12} ${-72 + i * 6} L${-40 - i * 16} 0" stroke="${OMBRE}" stroke-width="4.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+    }
+    const corps = `<ellipse cx="-10" cy="-48" rx="34" ry="27" fill="${OMBRE}"/><circle cx="24" cy="-40" r="13" fill="${OMBRE}"/>
+      <circle cx="29" cy="-44" r="2.6" fill="${KAOLIN}"/><circle cx="33" cy="-39" r="2.2" fill="${KAOLIN}"/>`;
+    const sac = o.sac ? `<path d="M-36 -66 C-40 -90 -4 -96 0 -72 C2 -62 -32 -58 -36 -66Z" fill="${OCRE}" stroke="${NOIR}" stroke-width="2.5"/><path d="M-6 -88 l8 -8 l4 6Z" fill="${OCRE}" stroke="${NOIR}" stroke-width="2"/>` : "";
+    const piqures = o.piqures ? [[-24, -56], [-4, -36], [-18, -30], [8, -58], [22, -48]].map(([px, py]) => `<circle cx="${px}" cy="${py}" r="3.4" fill="${ROUGE}"/>`).join("") : "";
+    return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, `<g class="${o.anim || ""}">${pattes}${corps}${sac}${piqures}</g>`, o.cls);
+  }
+
+  // lièvre : (x, y) = au sol, tourné vers la droite
+  function lievre(x, y, s = 1, o = {}) {
+    const corps = o.pose === "court"
+      ? `<ellipse cx="0" cy="-24" rx="30" ry="13" fill="${OMBRE}"/><line x1="18" y1="-16" x2="36" y2="-6" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/><line x1="-18" y1="-16" x2="-40" y2="-4" stroke="${OMBRE}" stroke-width="6" stroke-linecap="round"/>
+         <circle cx="30" cy="-36" r="10" fill="${OMBRE}"/><ellipse cx="22" cy="-58" rx="5" ry="18" fill="${OMBRE}" transform="rotate(-50 22 -46)"/><ellipse cx="28" cy="-60" rx="5" ry="18" fill="${OMBRE}" transform="rotate(-36 28 -48)"/>`
+      : `<ellipse cx="-6" cy="-22" rx="22" ry="20" fill="${OMBRE}"/><ellipse cx="-14" cy="-6" rx="18" ry="7" fill="${OMBRE}"/><line x1="10" y1="-16" x2="14" y2="0" stroke="${OMBRE}" stroke-width="5" stroke-linecap="round"/>
+         <circle cx="12" cy="-44" r="11" fill="${OMBRE}"/><ellipse cx="6" cy="-74" rx="5" ry="20" fill="${OMBRE}" transform="rotate(-10 6 -56)"/><ellipse cx="16" cy="-72" rx="5" ry="19" fill="${OMBRE}" transform="rotate(12 16 -54)"/>`;
+    const queue = o.pose === "court" ? `<circle cx="-30" cy="-30" r="5" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="1.5"/>` : `<circle cx="-28" cy="-16" r="5" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="1.5"/>`;
+    const oeil = o.pose === "court" ? `<circle cx="34" cy="-38" r="2" fill="${KAOLIN}"/>` : `<circle cx="16" cy="-46" r="2" fill="${KAOLIN}"/>`;
+    return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`, `<g class="${o.anim || ""}">${corps}${queue}${oeil}</g>`, o.cls);
+  }
+
+  // biche : (x, y) = sabots au sol, tournée vers la droite
+  function biche(x, y, s = 1, o = {}) {
+    const pattes = [-22, -14, 14, 22].map((px) => `<line x1="${px}" y1="-44" x2="${px + (px < 0 ? -2 : 2)}" y2="0" stroke="${OMBRE}" stroke-width="3.5" stroke-linecap="round"/>`).join("");
+    return g(`translate(${x} ${y}) scale(${o.flip ? -s : s} ${s})`,
+      `${pattes}<ellipse cx="0" cy="-48" rx="30" ry="12" fill="${OMBRE}"/><path d="M20 -54 L32 -84 L40 -82 L34 -50Z" fill="${OMBRE}"/>
+       <path d="M30 -84 L50 -80 L48 -74 L34 -76Z" fill="${OMBRE}"/><path d="M33 -86 L30 -98 L38 -88Z" fill="${OMBRE}"/>
+       <path d="M-28 -54 L-36 -60 L-32 -48Z" fill="${OMBRE}"/><circle cx="40" cy="-80" r="1.6" fill="${KAOLIN}"/>`, o.cls);
+  }
+
+  // essaim de guêpes, du trou vers la gauche
+  function guepes(x, y, n = 26) {
+    const r = alea(53); let s = "";
+    for (let i = 0; i < n; i++) {
+      const t = r(), px = x - t * 300 - r() * 40, py = y - 30 + Math.sin(t * 9 + i) * 40 + (r() - .5) * 50;
+      s += `<g transform="translate(${px.toFixed(0)} ${py.toFixed(0)}) rotate(${(r() * 50 - 25).toFixed(0)})"><ellipse cx="-3" cy="-7" rx="5" ry="3" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="1"/><ellipse cx="0" cy="0" rx="8" ry="4.5" fill="${JAUNE}" stroke="${NOIR}" stroke-width="1.6"/><line x1="-2" y1="-4" x2="-2" y2="4" stroke="${NOIR}" stroke-width="2"/><line x1="3" y1="-4" x2="3" y2="4" stroke="${NOIR}" stroke-width="2"/></g>`;
+    }
+    return g("", s, "anim-flotte");
   }
 
   function feu(x, y, s = 1, id) {
@@ -311,6 +373,30 @@
         + g(`translate(400 ${S - 70}) scale(1.6)`, `<g class="anim-flamme"><path d="M-30 0 C-36 -24 -10 -34 -16 -64 C8 -46 22 -30 26 0Z" fill="${ROUGE}"/><path d="M-14 0 C-18 -20 2 -30 0 -48 C14 -34 16 -16 12 0Z" fill="${JAUNE}"/></g>`)
         + fumee(420, 200) + quadrupede(620, S + 30, 1, "chien", { flip: true });
       case "cheval-court": return g("", cheval(0, S + 6, 1.2, { allure: "galop" }), "anim-traverse");
+      // Yemboado
+      case "yemboado-partage": return personne(250, S + 10, 1.1, { objet: "calebasse", cls: "entree" }) + personne(318, S + 12, .62, { flip: true }) + personne(352, S + 12, .7, { coiffe: "foulard", flip: true })
+        + personne(560, S + 14, 1, { pose: "bras-leves", flip: true }) + personne(612, S + 16, 1.05, { flip: true }) + personne(660, S + 14, .95, { pose: "bras-leves", flip: true });
+      case "chef-epreuve": return personne(140, S + 14, 1.35, { coiffe: "bonnet", liseré: JAUNE, objet: "baton", cls: "entree" })
+        + personne(330, S + 12, 1.05, { objet: "arc", pose: "marche" }) + personne(410, S + 12, 1.1, { objet: "arc", pose: "marche" }) + personne(490, S + 12, 1, { objet: "arc", pose: "marche" })
+        + personne(660, S + 14, 1, { objet: "arc", flip: true });
+      case "vieille-repoussee": return personne(600, S + 14, 1, { pose: "assis", coiffe: "foulard" }) + calebasse(640, S + 14, .5)
+        + personne(300, S + 12, 1.05, { objet: "arc", pose: "bras-leves" }) + personne(370, S + 12, 1.1, { objet: "arc" }) + personne(220, S + 12, 1, { objet: "arc", pose: "marche" });
+      case "yemboado-offre": return g("", anneaux(600, S - 30, 40, KAOLIN).replace(/<circle[^>]*r="40"[^>]*\/>$/, ""), "anim-lueur-douce")
+        + personne(600, S + 14, 1, { pose: "assis", coiffe: "foulard" }) + personne(520, S + 14, 1.1, { pose: "agenouille", objet: "calebasse", penche: 14 });
+      case "etalon-biche": return g("", anneaux(400, S - 46, 34, KAOLIN).replace(/<circle[^>]*r="34"[^>]*\/>$/, ""), "anim-lueur-douce")
+        + cheval(220, S + 10, 1.15, { allure: "debout", couleur: KAOLIN }) + biche(430, S + 12, 1.1, { flip: true }) + personne(120, S + 12, 1.1, { objet: "arc" });
+      case "retour-yemboado": return cheval(170, S + 10, 1.15, { allure: "pas", couleur: KAOLIN, cavalier: true }) + biche(360, S + 14, .85)
+        + personne(470, S + 14, 1.35, { coiffe: "bonnet", liseré: JAUNE, objet: "baton", flip: true })
+        + personne(560, S + 14, 1, { pose: "bras-leves", flip: true }) + personne(610, S + 16, .95, { coiffe: "foulard", flip: true }) + personne(660, S + 14, 1.05, { flip: true });
+      // L'Araignée et le Lièvre
+      case "araignee-gemit": return araignee(330, S + 12, 1.2, { anim: "anim-hoche" });
+      case "famille-faim": return personne(600, S + 14, 1, { pose: "assis", coiffe: "foulard" }) + personne(650, S + 14, .55) + personne(680, S + 14, .5) + calebasse(560, S + 14, .45);
+      case "araignee-ecoute": return araignee(330, S + 12, 1.1, { sac: true });
+      case "araignee-mange": return araignee(400, S + 12, 1.15) + calebasse(470, S + 14, .8, { to: true, fumee: true });
+      case "trainee-cendre": return `<path d="M0 ${S + 26} C140 ${S + 40} 250 ${S + 14} 420 ${S + 22}" stroke="${KAOLIN}" stroke-width="6" stroke-dasharray="3 12" stroke-linecap="round" fill="none"/>`
+        + araignee(500, S + 18, 1, { sac: true }) + lievre(150, S + 30, 1, { pose: "court" });
+      case "lievre-mange": return lievre(420, S + 14, 1.15) + calebasse(490, S + 14, .8, { to: true, fumee: true });
+      case "guepes": return guepes(560, S - 50) + araignee(170, S + 14, 1, { sac: true, piqures: true, flip: true }) + lievre(650, S + 14, 1, { flip: true, anim: "anim-hoche" });
     }
     return "";
   }

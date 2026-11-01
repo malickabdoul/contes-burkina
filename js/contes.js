@@ -258,10 +258,82 @@ window.CONTES = [
       { titre: "List of rulers of Liptako, Wikipédia (en anglais)", url: "https://en.wikipedia.org/wiki/List_of_rulers_of_Liptako" },
     ],
   },
+  {
+    id: "yemboado",
+    titre: "Yemboado, l'orphelin au cœur généreux",
+    genre: "Conte",
+    lieu: "Pays gourma",
+    region: "Goulmou",
+    lat: 12.06, lon: 0.36,
+    langue: "gulmancema",
+    ambiance: "savane",
+    voix: [], // langues déjà enregistrées, par exemple ["gulmancema", "francais"]
+    resume: "Un orphelin pauvre partage son dernier repas avec une vieille femme, et la brousse le récompense.",
+    scenes: [
+      { decor: "jour", sol: "village", elements: ["yemboado-partage"],
+        texte: "Dans un village du pays gourma vivait un jeune orphelin nommé Yemboado. Il ne cherchait jamais la bagarre, ne se plaignait jamais de sa pauvreté et partageait toujours le peu de mil qu'il récoltait. Les villageois se moquaient de lui : « À quoi te sert d'être si bon ? » Il répondait calmement : « Ce que Dieu réserve à un homme, aucun humain ne peut le lui arracher. »" },
+      { decor: "aube", sol: "village", elements: ["chef-epreuve"],
+        texte: "Un jour, le chef de la contrée, un homme puissant mais craint pour sa dureté, organisa une grande épreuve de chasse. Le vainqueur recevrait le titre de Buricimba, noble du village, et la main de sa fille. Les jeunes hommes partirent dans la brousse avec des arcs solides. Yemboado resta derrière, avec un vieil arc usé." },
+      { decor: "midi", sol: "savane", elements: ["vieille-repoussee"],
+        texte: "En chemin, les chasseurs croisèrent une vieille femme affamée, assise sous un baobab. Elle leur demanda un peu d'eau et de nourriture. Ils la repoussèrent : « Écarte-toi, vieille femme, nous n'avons pas de temps à perdre avec toi, nous chassons pour le roi ! »" },
+      { decor: "crepuscule", sol: "savane", elements: ["yemboado-offre"],
+        texte: "Quand Yemboado arriva, il s'arrêta. Il offrit à la vieille femme sa gourde d'eau et sa seule galette de mil. Elle était en réalité un génie protecteur de la brousse. Pour le remercier, elle lui dit : « Ne poursuis pas le gibier comme les autres. Va vers le grand rocher, à l'est. Tu y trouveras ce qui te revient. »" },
+      { decor: "aube", sol: "rocher", elements: ["etalon-biche"],
+        texte: "Yemboado obéit. Près du rocher, il vit un magnifique étalon blanc et une biche sacrée qui l'attendaient sans bouger. Pendant ce temps, les autres chasseurs revenaient bredouilles, fatigués et honteux." },
+      { decor: "midi", sol: "village", elements: ["retour-yemboado"],
+        texte: "Yemboado revint au village sur son fier cheval et offrit la biche au chef, sous les yeux étonnés de tous. Le chef déclara : « La force ne vaut rien sans la pureté du cœur. Yemboado n'a pas seulement ramené le gibier, il a ramené la bénédiction des ancêtres et de Dieu. »" },
+    ],
+    lecon: "La générosité envers les plus faibles est récompensée. L'orgueil et le mépris mènent à l'échec, alors que l'humilité élève l'homme au sein de sa communauté.",
+    note: "Le conte invite aussi à la patience et à la confiance face au destin.",
+    quiz: [
+      { q: "Qu'offre Yemboado à la vieille femme ?", choix: ["Sa gourde d'eau et sa galette de mil", "Son vieil arc", "Une biche"], bonne: 0 },
+      { q: "Qui était vraiment la vieille femme ?", choix: ["La fille du chef", "Un génie protecteur de la brousse", "La mère de Yemboado"], bonne: 1 },
+      { q: "Que nous apprend ce conte ?", choix: ["La force suffit pour réussir", "La générosité et l'humilité élèvent l'homme", "Il vaut mieux chasser seul"], bonne: 1 },
+    ],
+    sources: [
+      { titre: "« Le conte de Yemboado (sagesse gourmantché) », texte fourni par le groupe" },
+    ],
+  },
+  {
+    id: "araignee",
+    titre: "L'Araignée, le Lièvre et le génie de la faim",
+    genre: "Conte",
+    lieu: "Sud-Ouest",
+    region: "Djôrô",
+    lat: 10.8, lon: -3.2,
+    langue: "dioula",
+    ambiance: "pierres",
+    voix: [], // langues déjà enregistrées, par exemple ["dioula", "francais"]
+    resume: "Pendant la famine, l'Araignée mange en cachette. Le Lièvre découvre son secret.",
+    scenes: [
+      { decor: "midi", sol: "savane-seche", elements: ["araignee-gemit", "famille-faim"],
+        texte: "Une année, une terrible sécheresse frappa le Djôrô. La terre était craquelée, les marigots étaient à sec et le mil ne poussait plus. Tout le monde avait faim. L'Araignée, la plus gourmande et la plus égoïste de la brousse, cherchait un moyen de remplir son gros ventre sans partager avec sa famille." },
+      { decor: "crepuscule", sol: "baobab-genie", elements: ["araignee-ecoute"],
+        texte: "Dans la brousse, l'Araignée entendit une voix profonde sortir d'un trou, sous un grand baobab. C'était un Thil, un génie de la brousse : « Apporte-moi chaque jour un sac de mouches bien fraîches, et je ferai apparaître pour toi seul une calebasse de tô et de sauce gombo. Mais n'amène jamais personne ici, et ne sois pas ingrate. »" },
+      { decor: "jour", sol: "baobab-genie", elements: ["araignee-mange"],
+        texte: "L'Araignée accepta. Chaque jour, elle ramassait des mouches en cachette, allait manger chez le génie à s'en crever le ventre, puis rentrait au village en faisant semblant d'avoir faim. Pendant ce temps, sa femme et ses enfants maigrissaient à vue d'œil." },
+      { decor: "aube", sol: "savane-seche", elements: ["trainee-cendre"],
+        texte: "Le Lièvre, le plus rusé de la région, remarqua que l'Araignée restait ronde et brillante malgré la famine. Un matin, il perça un petit trou dans son sac et y versa de la cendre blanche. En marchant, l'Araignée laissa une longue traînée blanche. Le Lièvre n'eut qu'à suivre la piste, et il découvrit son secret." },
+      { decor: "jour", sol: "baobab-genie", elements: ["lievre-mange"],
+        texte: "Le lendemain, le Lièvre arriva au baobab avant l'Araignée. Il imita parfaitement sa voix et apporta un sac de mouches. Le génie, trompé, fit sortir la calebasse. Le Lièvre mangea tout, nettoya bien la calebasse et se cacha pour voir la suite." },
+      { decor: "crepuscule", sol: "baobab-genie", elements: ["guepes"],
+        texte: "Quand l'Araignée arriva avec son sac, le génie crut qu'elle se moquait de lui en revenant deux fois. Fou de colère, il fit jaillir du trou un essaim de guêpes géantes. L'Araignée s'enfuit à travers tout le Djôrô, couverte de piqûres, sous les rires du Lièvre." },
+    ],
+    lecon: "L'égoïsme finit toujours par être puni. Cacher de la nourriture à sa famille ou à ses voisins quand tout le monde a faim est une faute grave.",
+    note: "Le Lièvre n'est pas puni pour sa ruse : elle a servi à démasquer un comportement malhonnête.",
+    quiz: [
+      { q: "Que demande le génie en échange de la nourriture ?", choix: ["Un sac de mouches fraîches", "Une calebasse de mil", "Un poulet"], bonne: 0 },
+      { q: "Comment le Lièvre découvre-t-il le secret ?", choix: ["Il interroge le génie", "Il suit une traînée de cendre blanche", "Il entend l'Araignée chanter"], bonne: 1 },
+      { q: "Que nous apprend ce conte ?", choix: ["Il faut garder sa nourriture pour soi", "L'égoïsme finit par être puni", "Les guêpes protègent les baobabs"], bonne: 1 },
+    ],
+    sources: [
+      { titre: "« L'Araignée, le Lièvre et le génie de la faim (Djôrô) », texte fourni par le groupe" },
+    ],
+  },
 ];
 
 // Ordre du voyage : d'est en ouest, en partant de la capitale
-window.VOYAGE = ["faux-depart", "yennenga", "diaba-lompo", "petite-querelle", "sabou", "dafra", "loropeni"];
+window.VOYAGE = ["faux-depart", "yennenga", "diaba-lompo", "yemboado", "petite-querelle", "sabou", "dafra", "araignee", "loropeni"];
 
 window.LEXIQUE = [
   { mot: "Naaba", langue: "Mooré", sens: "Chef, roi." },
@@ -277,6 +349,8 @@ window.LEXIQUE = [
   { mot: "Jam", langue: "Fulfulde", sens: "La paix." },
   { mot: "Liptako", langue: "Fulfulde", sens: "« On ne peut pas le terrasser »." },
   { mot: "Nungu", langue: "Gulmancema", sens: "Le nom de Fada N'Gourma." },
+  { mot: "Buricimba", langue: "Gulmancema", sens: "Noble du village, titre promis au vainqueur dans le conte de Yemboado." },
+  { mot: "Thil", langue: "Lobiri", sens: "Génie de la brousse." },
   { mot: "Dolo", langue: "Usage courant", sens: "Bière de mil, souvent offerte lors des rites." },
 ];
 

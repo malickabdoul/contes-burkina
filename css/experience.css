@@ -48,6 +48,8 @@ body.verrou { overflow: hidden; }
   color: var(--kaolin); text-decoration: none; font-size: 1.1rem; border-bottom: 1px solid rgba(241, 232, 216, .18);
 }
 .menu-contes li a span { font: 800 .9rem var(--titre); color: var(--jaune); padding-top: .2rem; }
+.menu-contes li a b { font-weight: 400; }
+.menu-contes li a em { font-style: italic; color: rgba(241, 232, 216, .7); }
 .menu-contes li a:hover { color: var(--jaune); }
 .menu-contes p { margin: 0; }
 .menu-contes p a { color: var(--jaune); }
@@ -72,6 +74,11 @@ body.verrou { overflow: hidden; }
 }
 .bulle-region strong { display: block; font: 800 1rem var(--titre); }
 .bulle-region em { display: block; color: var(--jaune); margin-bottom: .2rem; }
+.bulle-region span { display: block; }
+.bulle-region .conte-ici { margin-top: .45rem; padding-top: .45rem; border-top: 1px solid rgba(241, 232, 216, .25); font-weight: 700; }
+.bulle-region .action { margin-top: .4rem; font-style: italic; color: var(--jaune); }
+.bulle-region.fixe { pointer-events: auto; }
+.bulle-region .bouton-feu { display: block; width: 100%; margin-top: .6rem; padding: .55rem .8rem; font-size: .78rem; text-align: left; box-shadow: 3px 3px 0 var(--rouge); }
 
 /* ---------- le récit qui défile ----------
    Chaque étape est un espace de défilement. Son cartel reste fixe à l'écran

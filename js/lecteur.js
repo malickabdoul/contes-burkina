@@ -86,7 +86,7 @@
     fin.hidden = false;
     $("#fin-lecon").textContent = actuel.lecon;
     $("#fin-note").textContent = actuel.note || "";
-    $("#fin-sources").innerHTML = actuel.sources.map((s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${echapper(s.titre)}</a></li>`).join("");
+    $("#fin-sources").innerHTML = actuel.sources.map((s) => s.url ? `<li><a href="${s.url}" target="_blank" rel="noopener">${echapper(s.titre)}</a></li>` : `<li>${echapper(s.titre)}</li>`).join("");
     construireQuiz();
     const prochain = parId(VOYAGE[(VOYAGE.indexOf(actuel.id) + 1) % VOYAGE.length]);
     $("#fin-suivant").textContent = Lecteur.libelleSuivant ? Lecteur.libelleSuivant(actuel.id) : `Conte suivant : ${prochain.titre}`;
