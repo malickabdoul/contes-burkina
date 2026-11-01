@@ -21,7 +21,7 @@ window.CONTES = [
     lat: 11.78, lon: -0.37,
     langue: "moore",
     ambiance: "savane",
-    voix: [], // langues déjà enregistrées, par exemple ["moore", "francais"]
+    voix: ["moore", "francais"], // langues déjà enregistrées, par exemple ["moore", "francais"]
     resume: "La fuite d'une princesse guerrière, et la naissance du peuple mossi.",
     scenes: [
       { decor: "jour", sol: "palais", elements: ["guerriere"],
