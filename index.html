@@ -42,6 +42,7 @@
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="ondes" d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.6 8.6 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         <span>Son coupé</span>
       </button>
+      <button type="button" class="outil" id="bouton-voix" aria-pressed="true" hidden>Voix</button>
       <a class="outil" href="simple.html">Version simple</a>
     </div>
     <nav class="menu-contes" id="menu-contes" aria-label="Les neuf contes" hidden>
@@ -59,25 +60,25 @@
   <main>
     <div class="recit" id="recit">
       <section class="chapitre" id="ouverture" aria-labelledby="titre-site">
-        <div class="etape" data-scene="village">
+        <div class="etape" data-scene="village" data-voix="ouverture-1">
           <div class="cartel-ouverture">
             <h1 id="titre-site" tabindex="-1">Veillées du Faso</h1>
             <p>Une nuit de contes au Burkina Faso.</p>
             <p class="defiler">Faites défiler pour entrer dans la cour.</p>
           </div>
         </div>
-        <div class="etape" data-scene="village">
+        <div class="etape" data-scene="village" data-voix="ouverture-2">
           <div class="cartel">
             <p>Nous sommes à Tiébélé, dans le sud du pays, chez les Kassena. Ici, les hommes bâtissent les maisons et les femmes les peignent. Cette peinture s'appelle le dora.</p>
           </div>
         </div>
-        <div class="etape" data-scene="village">
+        <div class="etape" data-scene="village" data-voix="ouverture-3">
           <div class="cartel">
             <p>Trois couleurs sur fond d'ocre : le rouge, le blanc et le noir. Chaque motif a un sens. Les triangles rappellent les morceaux d'un canari cassé, pour apprendre aux enfants à prendre soin des jarres.</p>
             <p>Depuis 2024, la cour royale de Tiébélé est inscrite au patrimoine mondial de l'UNESCO.</p>
           </div>
         </div>
-        <div class="etape" data-scene="village">
+        <div class="etape" data-scene="village" data-voix="ouverture-4">
           <div class="cartel">
             <p>La nuit tombe. On s'assoit autour du feu et le conteur prend la parole. Ce soir, il nous emmène dans tout le pays.</p>
           </div>
@@ -85,14 +86,14 @@
       </section>
 
       <section class="chapitre" id="carte" aria-labelledby="titre-carte">
-        <div class="etape" data-scene="carte">
+        <div class="etape" data-scene="carte" data-voix="carte-1">
           <div class="cartel">
             <h2 id="titre-carte">Dix-sept régions</h2>
             <p>Depuis juillet 2025, le Burkina Faso compte 17 régions. Leurs noms viennent des langues du pays, de ses rivières et de ses anciens royaumes.</p>
             <p class="astuce-carte">Survolez une région pour lire l'histoire de son nom.</p>
           </div>
         </div>
-        <div class="etape" data-scene="carte" data-cle="chemin">
+        <div class="etape" data-scene="carte" data-cle="chemin" data-voix="carte-2">
           <div class="cartel">
             <p>Neuf feux brûlent sur la carte. Chacun garde une histoire. Suivez le chemin jaune, d'un feu à l'autre, ou cliquez sur un feu pour commencer par le conte de votre choix.</p>
           </div>
@@ -102,7 +103,7 @@
       <!-- les contes sont ajoutés ici par js/experience.js -->
 
       <section class="chapitre" id="final" aria-labelledby="titre-final">
-        <div class="etape" data-scene="village">
+        <div class="etape" data-scene="village" data-voix="final">
           <div class="cartel cartel-fin">
             <h2 id="titre-final">Le feu baisse</h2>
             <p>Les contes vivent tant qu'on les raconte. À votre tour de les dire, en mooré, en dioula, en fulfulde, en gulmancema ou en français.</p>

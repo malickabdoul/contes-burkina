@@ -1,0 +1,6 @@
+Narration en français de la version immersive : un fichier MP3 par étape.
+Noms des fichiers : ouverture-1.mp3 à ouverture-4.mp3, carte-1.mp3, carte-2.mp3,
+puis pour chaque conte <conte>-titre.mp3, <conte>-1.mp3, <conte>-2.mp3... et <conte>-fin.mp3,
+et enfin final.mp3.
+Après avoir déposé des fichiers ici, ajouter leurs noms (sans « .mp3 ») dans la liste
+window.NARRATION, à la fin de js/contes.js.

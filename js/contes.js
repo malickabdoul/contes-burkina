@@ -367,3 +367,7 @@ window.SOURCES_TIEBELE = [
   { titre: "« Peinture murale Kassena : le dora, une prouesse artistique féminine à l'épreuve du temps », Sidwaya, 6 novembre 2023", url: "https://www.sidwaya.info/peinture-murale-kassena-le-dora-une-prouesse-artistique-feminine-a-lepreuve-du-temps/" },
   { titre: "« UNESCO : la Cour royale de Tiébélé figure désormais sur la Liste du patrimoine mondial », Sidwaya, 26 juillet 2024", url: "https://www.sidwaya.info/unesco-la-cour-royale-de-tiebele-figure-desormais-sur-la-liste-du-patrimoine-mondial/" },
 ];
+
+// Narration en français de la version immersive : un fichier par étape dans audio/narration/
+// (exemple : yennenga-1.mp3). On liste ici les noms des fichiers déjà déposés, sans « .mp3 ».
+window.NARRATION = [];

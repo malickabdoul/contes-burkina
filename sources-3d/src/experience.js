@@ -26,7 +26,7 @@ VOYAGE.forEach((id, n) => {
   sec.className = "chapitre conte";
   sec.id = "c-" + id;
   sec.setAttribute("aria-labelledby", "t-" + id);
-  let h = `<div class="etape" data-scene="carte" data-conte="${id}">
+  let h = `<div class="etape" data-scene="carte" data-conte="${id}" data-voix="${id}-titre">
       <div class="cartel cartel-titre">
         <p class="numero">Conte ${n + 1} sur ${VOYAGE.length}</p>
         <h2 id="t-${id}">${echapper(c.titre)}</h2>
@@ -34,12 +34,12 @@ VOYAGE.forEach((id, n) => {
       </div>
     </div>`;
   c.scenes.forEach((s, i) => {
-    h += `<div class="etape" data-scene="decor" data-conte="${id}" data-i="${i}">
+    h += `<div class="etape" data-scene="decor" data-conte="${id}" data-i="${i}" data-voix="${id}-${i + 1}">
       <div class="cartel cartel-scene"><p>${echapper(s.texte)}</p></div>
     </div>`;
   });
   const suivant = n < VOYAGE.length - 1 ? `<a class="bouton-discret clair" href="#c-${VOYAGE[n + 1]}">Conte suivant</a>` : `<a class="bouton-discret clair" href="#final">Finir la veillée</a>`;
-  h += `<div class="etape" data-scene="decor" data-conte="${id}" data-i="${c.scenes.length - 1}" data-fin="1">
+  h += `<div class="etape" data-scene="decor" data-conte="${id}" data-i="${c.scenes.length - 1}" data-fin="1" data-voix="${id}-fin">
       <div class="cartel cartel-fin">
         <h3>Ce que le conte nous apprend</h3>
         <p>${echapper(c.lecon)}</p>
@@ -362,7 +362,7 @@ function deverrouillerSon() {
 function regleSon(dt) {
   const coupe = !sonActif || window.Lecteur.estOuvert() || document.hidden;
   for (const [nom, s] of Object.entries(SONS)) {
-    const voulu = !coupe && nom === ambianceVoulue ? .6 : 0;
+    const voulu = !coupe && nom === ambianceVoulue ? (narrationEnCours() ? .2 : .6) : 0;
     s.vol += (voulu - s.vol) * Math.min(1, dt * 1.5);
     if (s.vol < .002 && voulu === 0) s.vol = 0;
     if (s.gain) s.gain.gain.value = s.vol; else s.a.volume = s.vol;
@@ -370,6 +370,43 @@ function regleSon(dt) {
     if (voulu === 0 && s.vol === 0 && !s.a.paused) s.a.pause();
   }
 }
+// ---------------------------------------------------------------- narration en français
+// Un fichier par étape, dans audio/narration/ ; js/contes.js liste ceux qui existent déjà.
+const NARRATION = new Set(window.NARRATION || []);
+let voixActive = true, narr = null, narrCible = null, narrDepuis = 0;
+function preparerNarration(id) {
+  if (narr || !NARRATION.size) return;
+  const a = new Audio();
+  a.preload = "auto";
+  narr = { a, id: null, vol: 0 };
+  if (contexte) { narr.gain = contexte.createGain(); contexte.createMediaElementSource(a).connect(narr.gain).connect(contexte.destination); }
+  // pendant le clic d'entrée : on lance tout de suite la première étape
+  if (id) { a.src = `audio/narration/${id}.mp3`; narr.id = id; narr.vol = 1; a.play().catch(() => {}); }
+}
+const narrationEnCours = () => narr && narr.id && !narr.a.paused && !narr.a.ended;
+function regleNarration(dt, e, cache) {
+  const id = e.el.dataset.voix;
+  const voulu = !cache && sonActif && voixActive && id && NARRATION.has(id) ? id : null;
+  if (voulu !== narrCible) { narrCible = voulu; narrDepuis = performance.now(); }
+  if (!narr) return;
+  if (narr.id && narr.id !== narrCible) {
+    // on change d'étape : la voix s'éteint vite
+    narr.vol = Math.max(0, narr.vol - dt * 5);
+    if (narr.vol === 0) { narr.a.pause(); narr.id = null; }
+  } else if (!narr.id && narrCible && performance.now() - narrDepuis > 350) {
+    // on attend un instant : si on défile vite, on ne lance pas chaque étape
+    narr.a.src = `audio/narration/${narrCible}.mp3`;
+    narr.id = narrCible; narr.vol = 1;
+    narr.a.play().catch(() => {});
+  }
+  if (narr.gain) narr.gain.gain.value = narr.vol; else narr.a.volume = narr.vol;
+}
+const boutonVoix = $("#bouton-voix");
+if (NARRATION.size) {
+  boutonVoix.hidden = false;
+  boutonVoix.addEventListener("click", () => { voixActive = !voixActive; boutonVoix.setAttribute("aria-pressed", String(voixActive)); });
+}
+
 function ambiancePour(e) {
   if (e.scene === "village") return "veillee";
   if (e.scene === "carte" && !e.conte) return "ciel";
@@ -377,7 +414,7 @@ function ambiancePour(e) {
 }
 const boutonSon = $("#bouton-son");
 function majBoutonSon() { boutonSon.setAttribute("aria-pressed", String(sonActif)); boutonSon.querySelector("span").textContent = sonActif ? "Son activé" : "Son coupé"; }
-boutonSon.addEventListener("click", () => { sonActif = !sonActif; if (sonActif) deverrouillerSon(); majBoutonSon(); });
+boutonSon.addEventListener("click", () => { sonActif = !sonActif; if (sonActif) { deverrouillerSon(); preparerNarration(null); } majBoutonSon(); });
 
 // ---------------------------------------------------------------- lecteur (voix et quiz)
 const Lecteur = window.Lecteur;
@@ -390,7 +427,7 @@ document.addEventListener("click", (e) => { const b = e.target.closest("[data-ou
 const entree = $("#entree");
 function entrer(avecSon) {
   sonActif = avecSon;
-  if (avecSon) deverrouillerSon();
+  if (avecSon) { deverrouillerSon(); preparerNarration(NARRATION.has("ouverture-1") ? "ouverture-1" : null); }
   majBoutonSon();
   entree.classList.add("partie");
   document.body.classList.remove("verrou");
@@ -416,8 +453,9 @@ function boucle() {
     etapeActive = e;
   }
   ambianceVoulue = ambiancePour(e);
-  regleSon(dt);
   const fin = final.getBoundingClientRect().bottom + scrollY;
+  regleNarration(dt, e, scrollY > fin || Lecteur.estOuvert() || document.hidden);
+  regleSon(dt);
   barre.style.transform = `scaleX(${borne(scrollY / Math.max(1, fin - innerHeight))})`;
   if (scrollY > fin || Lecteur.estOuvert()) return; // la scène est cachée : on ne dessine pas
 

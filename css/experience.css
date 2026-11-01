@@ -156,3 +156,7 @@ body.verrou { overflow: hidden; }
   .cartel, .cartel-ouverture, .etape.actif > .cartel, .etape.actif > .cartel-ouverture { transform: none; transition: none; }
   .voile, .entree { transition: none; }
 }
+
+/* bouton de la narration (visible quand des fichiers de narration existent) */
+#bouton-voix[aria-pressed="true"] { color: var(--jaune); }
+#bouton-voix[aria-pressed="false"] { opacity: .6; text-decoration: line-through; }
