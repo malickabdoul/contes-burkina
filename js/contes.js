@@ -96,6 +96,7 @@ window.CONTES = [
     langue: "moore",
     ambiance: "eau",
     voix: ["moore", "francais"], // langues déjà enregistrées, par exemple ["moore", "francais"]
+    conteurs: { moore: "NIKIEMA Abdoul Fatahou", francais: "NIKIEMA Abdoul Fatahou" }, // qui raconte, pour les crédits
     resume: "Un chasseur perdu, un crocodile qui montre le chemin, et une promesse tenue.",
     scenes: [
       { decor: "midi", sol: "savane-seche", elements: ["chasseur-marche"],
@@ -236,6 +237,7 @@ window.CONTES = [
     langue: "dioula",
     ambiance: "pierres",
     voix: ["dioula", "francais"], // langues déjà enregistrées, par exemple ["dioula", "francais"]
+    conteurs: { dioula: "OUOBA Youmanli William Arnaud", francais: "OUOBA Youmanli William Arnaud" }, // qui raconte, pour les crédits
     resume: "Pendant la famine, l'Araignée mange en cachette. Le Lièvre découvre son secret.",
     scenes: [
       { decor: "midi", sol: "savane-seche", elements: ["araignee-gemit", "famille-faim"],
