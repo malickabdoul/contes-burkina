@@ -378,7 +378,10 @@ function regleSon(dt) {
 }
 // ---------------------------------------------------------------- narration en français
 // Un fichier par étape, dans audio/narration/ ; js/contes.js liste ceux qui existent déjà.
-const NARRATION = new Set(window.NARRATION || []);
+// La narration existe en français (audio/narration/) et peut exister en mooré (audio/narration/moore/).
+const NARRATIONS = { francais: new Set(window.NARRATION || []), moore: new Set(window.NARRATION_MOORE || []) };
+let langueVoix = "francais", NARRATION = NARRATIONS.francais;
+const dossierVoix = () => (langueVoix === "moore" ? "audio/narration/moore/" : "audio/narration/");
 let voixActive = true, narr = null, narrCible = null, narrDepuis = 0;
 function preparerNarration(id) {
   if (narr || !NARRATION.size) return;
@@ -387,7 +390,7 @@ function preparerNarration(id) {
   narr = { a, id: null, vol: 0 };
   if (contexte) { narr.gain = contexte.createGain(); contexte.createMediaElementSource(a).connect(narr.gain).connect(contexte.destination); }
   // pendant le clic d'entrée : on lance tout de suite la première étape
-  if (id) { a.src = `audio/narration/${id}.mp3`; narr.id = id; narr.vol = 1; a.play().catch(() => {}); }
+  if (id) { a.src = `${dossierVoix()}${id}.mp3`; narr.id = id; narr.vol = 1; a.play().catch(() => {}); }
 }
 const narrationEnCours = () => narr && narr.id && !narr.a.paused && !narr.a.ended;
 function regleNarration(dt, e, cache) {
@@ -401,16 +404,30 @@ function regleNarration(dt, e, cache) {
     if (narr.vol === 0) { narr.a.pause(); narr.id = null; }
   } else if (!narr.id && narrCible && performance.now() - narrDepuis > 350) {
     // on attend un instant : si on défile vite, on ne lance pas chaque étape
-    narr.a.src = `audio/narration/${narrCible}.mp3`;
+    narr.a.src = `${dossierVoix()}${narrCible}.mp3`;
     narr.id = narrCible; narr.vol = 1;
     narr.a.play().catch(() => {});
   }
   if (narr.gain) narr.gain.gain.value = narr.vol; else narr.a.volume = narr.vol;
 }
 const boutonVoix = $("#bouton-voix");
-if (NARRATION.size) {
+// bouton du haut : voix en français, en mooré (si elle existe), ou coupée
+const etatsVoix = ["francais", ...(NARRATIONS.moore.size ? ["moore"] : []), "coupee"];
+const NOMS_VOIX = { francais: "Voix : français", moore: "Voix : mooré", coupee: "Voix coupée" };
+function choisirVoix(etat) {
+  voixActive = etat !== "coupee";
+  if (voixActive && etat !== langueVoix) {
+    langueVoix = etat; NARRATION = NARRATIONS[etat];
+    if (narr) { narr.a.pause(); narr.id = null; narrCible = null; }
+  }
+  boutonVoix.textContent = NOMS_VOIX[etat];
+  boutonVoix.setAttribute("aria-pressed", String(voixActive));
+  boutonVoix.dataset.etat = etat;
+}
+if (NARRATIONS.francais.size) {
   boutonVoix.hidden = false;
-  boutonVoix.addEventListener("click", () => { voixActive = !voixActive; boutonVoix.setAttribute("aria-pressed", String(voixActive)); });
+  choisirVoix("francais");
+  boutonVoix.addEventListener("click", () => choisirVoix(etatsVoix[(etatsVoix.indexOf(boutonVoix.dataset.etat) + 1) % etatsVoix.length]));
 }
 
 function ambiancePour(e) {
@@ -431,7 +448,8 @@ document.addEventListener("click", (e) => { const b = e.target.closest("[data-ou
 
 // ---------------------------------------------------------------- entrée
 const entree = $("#entree");
-function entrer(avecSon) {
+function entrer(avecSon, langue = "francais") {
+  if (avecSon && NARRATIONS[langue] && NARRATIONS[langue].size) choisirVoix(langue);
   sonActif = avecSon;
   if (avecSon) { deverrouillerSon(); preparerNarration(NARRATION.has("ouverture-1") ? "ouverture-1" : null); }
   majBoutonSon();
@@ -441,7 +459,9 @@ function entrer(avecSon) {
   setTimeout(() => { entree.hidden = true; }, reduit ? 0 : 900);
   $("#titre-site").focus({ preventScroll: true });
 }
-$("#entrer-son").addEventListener("click", () => entrer(true));
+$("#entrer-son").addEventListener("click", () => entrer(true, "francais"));
+const entrerMoore = $("#entrer-moore");
+if (NARRATIONS.moore.size) { entrerMoore.hidden = false; entrerMoore.disabled = false; entrerMoore.addEventListener("click", () => entrer(true, "moore")); }
 $("#entrer-silence").addEventListener("click", () => entrer(false));
 
 // ---------------------------------------------------------------- boucle

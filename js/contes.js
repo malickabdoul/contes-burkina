@@ -415,6 +415,7 @@ window.NARRATION = [
   "petite-querelle-4",
   "petite-querelle-5",
   "petite-querelle-fin",
+  "sabou-titre",
   "sabou-1",
   "sabou-2",
   "sabou-3",
@@ -436,4 +437,13 @@ window.NARRATION = [
   "araignee-5",
   "araignee-6",
   "araignee-fin",
+  "loropeni-1",
+  "loropeni-2",
+  "loropeni-3",
+  "loropeni-4",
+  "loropeni-5",
+  "final",
 ];
+
+// Narration en mooré : mêmes noms de fichiers, dans audio/narration/moore/.
+window.NARRATION_MOORE = [];
