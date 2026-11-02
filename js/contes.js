@@ -432,4 +432,8 @@ window.NARRATION = [
   "araignee-1",
   "araignee-2",
   "araignee-3",
+  "araignee-4",
+  "araignee-5",
+  "araignee-6",
+  "araignee-fin",
 ];
