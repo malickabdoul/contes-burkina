@@ -468,11 +468,19 @@ function demanderVoix(son) {
   avecLeSon = son;
   $("#choix-son").hidden = true;
   $("#choix-voix").hidden = false;
-  $("#note-moore").hidden = NARRATIONS.moore.size > 0;
+  const nMoore = NARRATIONS.moore.size;
+  $("#note-moore").textContent = nMoore ? "Pour l'instant, la voix en mooré raconte l'ouverture du site. La suite s'affiche en texte." : "La voix en mooré arrive bientôt. En attendant, le texte s'affiche à l'écran.";
+  $("#note-moore").hidden = nMoore >= NARRATIONS.francais.size;
   $('#choix-voix [data-voix="francais"]').focus();
 }
 $("#entrer-son").addEventListener("click", () => demanderVoix(true));
 $("#entrer-silence").addEventListener("click", () => demanderVoix(false));
+// lien vers les références : on entre sans le son et on descend aux sources
+$("#vers-sources").addEventListener("click", (e) => {
+  e.preventDefault();
+  entrer(false, "coupee");
+  requestAnimationFrame(() => $("#sources").scrollIntoView());
+});
 $("#choix-voix").addEventListener("click", (e) => { const b = e.target.closest("[data-voix]"); if (b) entrer(avecLeSon, b.dataset.voix); });
 
 // ---------------------------------------------------------------- boucle

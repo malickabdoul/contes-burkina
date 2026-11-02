@@ -179,13 +179,5 @@ body.verrou { overflow: hidden; }
 .choix-voix-titre { font: 800 clamp(1.3rem, 2.4vw, 1.8rem) var(--titre); margin: 1.6rem 0 0; color: var(--jaune); }
 .choix-voix .entree-boutons { margin-top: 1rem; }
 
-/* bandes de l'accueil aux couleurs du drapeau : rouge en haut, vert en bas, l'étoile jaune entre les deux */
-.entree > .bande-tiebele { --dent: var(--rouge); --fond: var(--jaune); }
-.entree > .bande-tiebele:last-child { --dent: var(--vert); }
-.entree > .bande-tiebele {
-  background:
-    linear-gradient(135deg, var(--noir) 25%, transparent 25%) -15px 0 / 30px 30px,
-    linear-gradient(225deg, var(--noir) 25%, transparent 25%) -15px 0 / 30px 30px,
-    linear-gradient(315deg, var(--dent) 25%, transparent 25%) 0 0 / 30px 30px,
-    linear-gradient(45deg, var(--dent) 25%, var(--fond) 25%) 0 0 / 30px 30px;
-}
+/* bandes de l'accueil aux couleurs du drapeau : zigzags rouge, jaune et vert */
+.entree > .bande-tiebele { background: var(--noir) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' fill='%2314100D'/%3E%3Cg fill='none' stroke-width='6' stroke-linejoin='miter' stroke-linecap='square'%3E%3Cpath d='M-15 12 L0 3 L15 12 L30 3 L45 12' stroke='%23EF2B2D'/%3E%3Cpath d='M-15 20 L0 11 L15 20 L30 11 L45 20' stroke='%23FCD116'/%3E%3Cpath d='M-15 28 L0 19 L15 28 L30 19 L45 28' stroke='%23009E49'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 30px 30px repeat-x; }

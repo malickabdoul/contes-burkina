@@ -365,4 +365,4 @@ window.NARRATION = [
 ];
 
 // Narration en mooré : mêmes noms de fichiers, dans audio/narration/moore/.
-window.NARRATION_MOORE = [];
+window.NARRATION_MOORE = ["ouverture-1", "ouverture-2", "ouverture-3", "ouverture-4", "carte-1"];
