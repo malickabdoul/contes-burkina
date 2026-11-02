@@ -358,6 +358,7 @@ window.LEXIQUE = [
 
 window.SOURCES_GENERALES = [
   { titre: "« Les toponymes des 17 régions et leur signification », Sidwaya, 8 juillet 2025 (Service d'information du gouvernement)", url: "https://www.sidwaya.info/reorganisation-administrative-du-territoire-les-toponymes-des-17-regions-et-leur-signification/" },
+  { titre: "« Administration du territoire : le Burkina Faso réorganisé en 47 provinces et 17 régions », Sidwaya, juillet 2025 (chefs-lieux des régions)", url: "https://www.sidwaya.info/administration-du-territoire-le-burkina-faso-reorganise-en-47-provinces-et-17-regions/" },
   { titre: "Contours des provinces : geoBoundaries, d'après la Banque mondiale (2017), licence CC BY 4.0", url: "https://www.geoboundaries.org/" },
 ];
 
