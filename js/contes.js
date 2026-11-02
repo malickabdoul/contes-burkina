@@ -442,6 +442,7 @@ window.NARRATION = [
   "loropeni-3",
   "loropeni-4",
   "loropeni-5",
+  "loropeni-fin",
   "final",
 ];
 

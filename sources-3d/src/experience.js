@@ -459,6 +459,9 @@ function entrer(avecSon, langue) {
   setTimeout(() => { entree.hidden = true; }, reduit ? 0 : 900);
   $("#titre-site").focus({ preventScroll: true });
 }
+// scène d'accueil animée
+if (window.dessinerAccueil && !$("#entree-scene").firstChild) $("#entree-scene").innerHTML = window.dessinerAccueil();
+
 // premier choix : avec ou sans le son ; second choix : la voix qui raconte
 let avecLeSon = true;
 function demanderVoix(son) {

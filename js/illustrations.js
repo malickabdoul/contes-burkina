@@ -173,6 +173,15 @@
     return "";
   }
 
+  const jambeDebout = (peau, femme) => trait(-5, -32, -7, -4, femme ? peau : "#3A2A1E", 7) + pied(-8, 0, peau) + trait(5, -32, 7, -4, femme ? peau : "#3A2A1E", 7) + pied(6, 0, peau);
+  // djembé : (x, y) = posé au sol
+  function djembe(x, y, s = 1) {
+    let cordes = "";
+    for (let i = -12; i <= 12; i += 6) cordes += `<path d="M${i} -46 L${i * .35} -24" stroke="${KAOLIN}" stroke-width="1.4"/>`;
+    return g(`translate(${x} ${y}) scale(${s})`, `<path d="M-15 -46 Q-14 -30 -5 -24 L-5 -18 Q-12 -6 -11 0 L11 0 Q12 -6 5 -18 L5 -24 Q14 -30 15 -46Z" fill="${OCRE}" stroke="${NOIR}" stroke-width="1.8" stroke-linejoin="round"/>
+      ${cordes}<ellipse cx="0" cy="-46" rx="15" ry="4" fill="${KAOLIN}" stroke="${NOIR}" stroke-width="1.6"/><path d="M-11 0 L11 0" stroke="${NOIR}" stroke-width="2"/>`);
+  }
+
   function personne(x, y, s = 1, o = {}) {
     const k = choix(x, y);
     const peau = o.peau || PEAUX[k % PEAUX.length];
@@ -199,6 +208,17 @@
           + trait(-1, -63, -1, -59, peau, 5) + tete(1, -72, 8, peau, coiffe, coiffeC))
         + bras(4, -50, 34, -30, manche, peau, -1)
         + (o.objet === "poulet" ? poulet(38, -24, .6) : o.objet === "calebasse" ? calebasse(40, -26, .6) : o.objet === "pinceau" ? `<line x1="34" y1="-30" x2="50" y2="-18" stroke="${BOIS}" stroke-width="3"/>` : "");
+      return sens(corps);
+    }
+    if (pose === "tambour" || pose === "salut") {
+      const tambour = pose === "tambour";
+      const brasAvant = tambour
+        ? `<g class="anim-frappe" style="transform-origin:11px -77px">${bras(11, -77, 30, -50, manche, peau)}</g>`
+        : `<g class="anim-salue" style="transform-origin:11px -77px">${bras(11, -77, 24, -116, manche, peau, -1)}</g>`;
+      const corps = jambeDebout(peau, femme) + (tambour ? djembe(30, 0, .95) : "")
+        + `${bras(-11, -77, tambour ? 22 : -18, tambour ? -48 : -44, manche, peau, -1)}${femme ? etoffe("M-16 -48 L16 -48 L19 -8 Q0 -5 -19 -8Z", pagne, rayurePagne) : ""}
+        ${etoffe("M-12 -80 Q0 -84 12 -80 L19 -30 Q0 -26 -19 -30Z", tissu, rayure)}
+        ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}${brasAvant}`;
       return sens(corps);
     }
     const marche = pose === "marche";
@@ -480,6 +500,21 @@
     };
     avecCollines = true;
     return couches;
+  };
+  // Scène d'accueil : les tambours de la veillée, un garde à cheval, et quelqu'un qui arrive pour saluer.
+  window.dessinerAccueil = function () {
+    P = CIELS.nuit;
+    const c = P, S = SOL;
+    const r = alea(11); let etoiles = "";
+    for (let i = 0; i < 40; i++) etoiles += `<circle cx="${(r() * 800).toFixed(0)}" cy="${(r() * 220).toFixed(0)}" r="${(r() * 1.4 + .5).toFixed(1)}" fill="${KAOLIN}" opacity="${(.4 + r() * .5).toFixed(2)}"${i % 6 === 0 ? ' class="anim-scintille"' : ""}/>`;
+    const contenu = etoiles + anneaux(735, 70, 20, KAOLIN)
+      + collines(c) + case_(250, S - 4, 1.15) + grenier(325, S - 4, .9) + solPres(c) + herbes(S + 8, 10, 7)
+      + cheval(808, S + 14, 1.08, { allure: "debout", cavalier: true, lance: true, flip: true, robe: ROUGE })
+      + feu(556, S + 22, 1.45, 0)
+      + personne(384, S + 24, 1.4, { pose: "tambour", coiffe: "bonnet", bonnet: ROUGE, robe: JAUNE, liseré: NOIR })
+      + personne(466, S + 28, 1.35, { pose: "tambour", robe: VERT, liseré: JAUNE })
+      + g("", personne(632, S + 30, 1.4, { pose: "salut", flip: true, coiffe: "foulard", robe: KAOLIN, liseré: ROUGE }), "anim-arrivee");
+    return `<svg role="img" aria-label="Deux joueurs de djembé près du feu, un garde à cheval, et une femme qui arrive pour saluer" viewBox="0 0 800 450" class="scene-accueil" preserveAspectRatio="xMaxYMax slice">${contenu}</svg>`;
   };
   window.PALETTE = { NOIR, KAOLIN, OCRE, ROUGE, VERT, JAUNE };
 })();

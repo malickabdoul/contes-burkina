@@ -292,6 +292,14 @@ main > section { padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
 .anim-hoche { animation: hoche .9s ease-in-out infinite; }
 @keyframes hoche { 30% { transform: translateY(-4px); } 60% { transform: translateY(0); } }
 
+.anim-frappe { animation: frappe .42s ease-in-out infinite alternate; }
+.anim-frappe-lent { animation-duration: .6s; }
+@keyframes frappe { from { transform: rotate(-16deg); } to { transform: rotate(10deg); } }
+.anim-salue { animation: salue .7s ease-in-out 4.2s infinite alternate; }
+@keyframes salue { from { transform: rotate(0); } to { transform: rotate(-22deg); } }
+.anim-arrivee { animation: arrivee 3.6s cubic-bezier(.25,.6,.3,1) .7s both; }
+@keyframes arrivee { from { transform: translateX(300px); } }
+
 /* ---------- petits écrans ---------- */
 @media (max-width: 900px) {
   .accueil { grid-template-columns: 1fr; }

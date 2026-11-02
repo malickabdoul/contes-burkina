@@ -17,6 +17,7 @@
 
   <div class="entree" id="entree">
     <div class="bande-tiebele" aria-hidden="true"></div>
+    <div class="entree-milieu">
     <div class="entree-centre">
       <p class="entree-titre">Veillées du Faso</p>
       <p class="entree-texte">Une nuit de contes au Burkina Faso. Neuf histoires, d'un bout à l'autre du pays.</p>
@@ -36,6 +37,8 @@
       <p class="entree-note" id="chargement" aria-live="polite">On allume le feu...</p>
       <p class="entree-note">Le casque ou les écouteurs sont conseillés. <a href="simple.html">Version simple, sans 3D</a></p>
       <noscript><p class="entree-note">Cette page a besoin de JavaScript. <a href="simple.html">Ouvrir la version simple</a>.</p></noscript>
+    </div>
+      <div class="entree-scene" id="entree-scene" aria-hidden="true"></div>
     </div>
     <div class="bande-tiebele" aria-hidden="true"></div>
   </div>
@@ -225,6 +228,7 @@
   <script src="js/carte-donnees.js"></script>
   <script src="js/contes.js"></script>
   <script src="js/illustrations.js"></script>
+  <script>if (window.dessinerAccueil) document.getElementById("entree-scene").innerHTML = window.dessinerAccueil();</script>
   <script src="js/lecteur.js"></script>
   <script type="module" src="js/experience.js"></script>
 </body>
