@@ -507,7 +507,7 @@
     const c = P, S = SOL;
     const r = alea(11); let etoiles = "";
     for (let i = 0; i < 40; i++) etoiles += `<circle cx="${(r() * 800).toFixed(0)}" cy="${(r() * 220).toFixed(0)}" r="${(r() * 1.4 + .5).toFixed(1)}" fill="${KAOLIN}" opacity="${(.4 + r() * .5).toFixed(2)}"${i % 6 === 0 ? ' class="anim-scintille"' : ""}/>`;
-    const contenu = etoiles + anneaux(735, 70, 20, KAOLIN)
+    const contenu = etoiles + anneaux(680, 112, 20, KAOLIN)
       + collines(c) + case_(250, S - 4, 1.15) + grenier(325, S - 4, .9) + solPres(c) + herbes(S + 8, 10, 7)
       + cheval(808, S + 14, 1.08, { allure: "debout", cavalier: true, lance: true, flip: true, robe: ROUGE })
       + feu(556, S + 22, 1.45, 0)
