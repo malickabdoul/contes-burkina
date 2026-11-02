@@ -95,7 +95,7 @@ window.CONTES = [
     lat: 12.07, lon: -2.23,
     langue: "moore",
     ambiance: "eau",
-    voix: [], // langues déjà enregistrées, par exemple ["moore", "francais"]
+    voix: ["moore", "francais"], // langues déjà enregistrées, par exemple ["moore", "francais"]
     resume: "Un chasseur perdu, un crocodile qui montre le chemin, et une promesse tenue.",
     scenes: [
       { decor: "midi", sol: "savane-seche", elements: ["chasseur-marche"],
@@ -305,7 +305,7 @@ window.CONTES = [
     lat: 10.8, lon: -3.2,
     langue: "dioula",
     ambiance: "pierres",
-    voix: [], // langues déjà enregistrées, par exemple ["dioula", "francais"]
+    voix: ["dioula", "francais"], // langues déjà enregistrées, par exemple ["dioula", "francais"]
     resume: "Pendant la famine, l'Araignée mange en cachette. Le Lièvre découvre son secret.",
     scenes: [
       { decor: "midi", sol: "savane-seche", elements: ["araignee-gemit", "famille-faim"],
