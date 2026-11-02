@@ -20,10 +20,18 @@
     <div class="entree-centre">
       <p class="entree-titre">Veillées du Faso</p>
       <p class="entree-texte">Une nuit de contes au Burkina Faso. Neuf histoires, d'un bout à l'autre du pays.</p>
-      <div class="entree-boutons">
-        <button type="button" class="bouton-feu" id="entrer-son" disabled>Écouter en français</button>
-        <button type="button" class="bouton-feu" id="entrer-moore" disabled hidden>Écouter en mooré</button>
+      <div class="entree-boutons" id="choix-son">
+        <button type="button" class="bouton-feu" id="entrer-son" disabled>Entrer avec le son</button>
         <button type="button" class="bouton-discret clair" id="entrer-silence" disabled>Entrer sans le son</button>
+      </div>
+      <div class="choix-voix" id="choix-voix" role="dialog" aria-labelledby="titre-choix-voix" hidden>
+        <p class="choix-voix-titre" id="titre-choix-voix">Qui raconte ?</p>
+        <div class="entree-boutons">
+          <button type="button" class="bouton-feu" data-voix="francais">Voix en français</button>
+          <button type="button" class="bouton-feu" data-voix="moore">Voix en langue nationale (mooré)</button>
+          <button type="button" class="bouton-discret clair" data-voix="coupee">Sans voix</button>
+        </div>
+        <p class="entree-note" id="note-moore" hidden>La voix en mooré arrive bientôt. En attendant, le texte s'affiche à l'écran.</p>
       </div>
       <p class="entree-note" id="chargement" aria-live="polite">On allume le feu...</p>
       <p class="entree-note">Le casque ou les écouteurs sont conseillés. <a href="simple.html">Version simple, sans 3D</a></p>

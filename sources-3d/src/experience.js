@@ -395,7 +395,7 @@ function preparerNarration(id) {
 const narrationEnCours = () => narr && narr.id && !narr.a.paused && !narr.a.ended;
 function regleNarration(dt, e, cache) {
   const id = e.el.dataset.voix;
-  const voulu = !cache && sonActif && voixActive && id && NARRATION.has(id) ? id : null;
+  const voulu = !cache && voixActive && id && NARRATION.has(id) ? id : null;
   if (voulu !== narrCible) { narrCible = voulu; narrDepuis = performance.now(); }
   if (!narr) return;
   if (narr.id && narr.id !== narrCible) {
@@ -448,10 +448,10 @@ document.addEventListener("click", (e) => { const b = e.target.closest("[data-ou
 
 // ---------------------------------------------------------------- entrée
 const entree = $("#entree");
-function entrer(avecSon, langue = "francais") {
-  if (avecSon && NARRATIONS[langue] && NARRATIONS[langue].size) choisirVoix(langue);
+function entrer(avecSon, langue) {
   sonActif = avecSon;
-  if (avecSon) { deverrouillerSon(); preparerNarration(NARRATION.has("ouverture-1") ? "ouverture-1" : null); }
+  if (NARRATIONS.francais.size) choisirVoix(langue === "moore" && !NARRATIONS.moore.size ? "coupee" : langue);
+  if (avecSon || langue !== "coupee") { deverrouillerSon(); preparerNarration(voixActive && NARRATION.has("ouverture-1") ? "ouverture-1" : null); }
   majBoutonSon();
   entree.classList.add("partie");
   document.body.classList.remove("verrou");
@@ -459,10 +459,18 @@ function entrer(avecSon, langue = "francais") {
   setTimeout(() => { entree.hidden = true; }, reduit ? 0 : 900);
   $("#titre-site").focus({ preventScroll: true });
 }
-$("#entrer-son").addEventListener("click", () => entrer(true, "francais"));
-const entrerMoore = $("#entrer-moore");
-if (NARRATIONS.moore.size) { entrerMoore.hidden = false; entrerMoore.disabled = false; entrerMoore.addEventListener("click", () => entrer(true, "moore")); }
-$("#entrer-silence").addEventListener("click", () => entrer(false));
+// premier choix : avec ou sans le son ; second choix : la voix qui raconte
+let avecLeSon = true;
+function demanderVoix(son) {
+  avecLeSon = son;
+  $("#choix-son").hidden = true;
+  $("#choix-voix").hidden = false;
+  $("#note-moore").hidden = NARRATIONS.moore.size > 0;
+  $('#choix-voix [data-voix="francais"]').focus();
+}
+$("#entrer-son").addEventListener("click", () => demanderVoix(true));
+$("#entrer-silence").addEventListener("click", () => demanderVoix(false));
+$("#choix-voix").addEventListener("click", (e) => { const b = e.target.closest("[data-voix]"); if (b) entrer(avecLeSon, b.dataset.voix); });
 
 // ---------------------------------------------------------------- boucle
 let avant = performance.now(), t = 0;

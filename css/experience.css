@@ -162,3 +162,7 @@ body.verrou { overflow: hidden; }
 /* bouton de la narration (visible quand des fichiers de narration existent) */
 #bouton-voix[aria-pressed="true"] { color: var(--jaune); }
 #bouton-voix[aria-pressed="false"] { opacity: .6; text-decoration: line-through; }
+
+/* second choix à l'entrée : la voix qui raconte */
+.choix-voix-titre { font: 800 clamp(1.3rem, 2.4vw, 1.8rem) var(--titre); margin: 1.6rem 0 0; color: var(--jaune); }
+.choix-voix .entree-boutons { margin-top: 1rem; }
