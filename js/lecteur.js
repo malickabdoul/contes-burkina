@@ -53,6 +53,10 @@
     if (!dialog.open) dialog.showModal();
     btnSuiv.focus();
     demarrerAmbiance();
+    // une voix enregistrée part d'elle-même : la langue nationale si elle existe, sinon le français
+    const enregistrees = (actuel.voix || []).filter((l) => LANGUES[l]);
+    const premiere = enregistrees.find((l) => l !== "francais") || enregistrees[0];
+    if (premiere) { const b = zoneVoix.querySelector(`[data-langue="${premiere}"]`); if (b) b.click(); }
     history.replaceState(null, "", "#conte-" + id);
   }
 
@@ -206,9 +210,15 @@
   function preparerVoix() {
     arreterVoix();
     langueEnCours = null;
-    zoneVoix.innerHTML = Object.entries(LANGUES).map(([code, nom]) =>
-      `<button type="button" data-langue="${code}" aria-pressed="false">${nom}</button>`).join("");
+    // seules les voix enregistrées sont proposées : les langues nationales d'abord, puis le français.
+    // Sans aucun enregistrement, on garde le français lu par le navigateur.
+    const enregistrees = Object.keys(LANGUES).filter((code) => (actuel.voix || []).includes(code));
+    const codes = enregistrees.length ? enregistrees : syntheseFr ? ["francais"] : [];
+    zoneVoix.innerHTML = codes.map((code) =>
+      `<button type="button" data-langue="${code}" aria-pressed="false">${LANGUES[code]}</button>`).join("");
+    zoneVoix.closest(".voix").hidden = !codes.length;
     zoneVoix.querySelectorAll("button").forEach((b) => verifierVoix(actuel.id, b));
+    majBoutonsVoix();
   }
   function verifierVoix(id, bouton) {
     const cle = `${id}-${bouton.dataset.langue}`;
@@ -234,7 +244,7 @@
     langueEnCours = code;
     if (voixConnues[cle]) {
       aVoix.src = `audio/voix/${cle}.mp3`;
-      aVoix.play().catch(() => {});
+      aVoix.play().catch(() => { langueEnCours = null; majBoutonsVoix(); });
     } else { lectureFr = true; lireScene(); }
     majBoutonsVoix();
     if (ambianceActive) fondu(aAmb, .1, 600);
