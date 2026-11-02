@@ -178,3 +178,14 @@ body.verrou { overflow: hidden; }
 /* second choix à l'entrée : la voix qui raconte */
 .choix-voix-titre { font: 800 clamp(1.3rem, 2.4vw, 1.8rem) var(--titre); margin: 1.6rem 0 0; color: var(--jaune); }
 .choix-voix .entree-boutons { margin-top: 1rem; }
+
+/* bandes de l'accueil aux couleurs du drapeau : rouge en haut, vert en bas, l'étoile jaune entre les deux */
+.entree > .bande-tiebele { --dent: var(--rouge); --fond: var(--jaune); }
+.entree > .bande-tiebele:last-child { --dent: var(--vert); }
+.entree > .bande-tiebele {
+  background:
+    linear-gradient(135deg, var(--noir) 25%, transparent 25%) -15px 0 / 30px 30px,
+    linear-gradient(225deg, var(--noir) 25%, transparent 25%) -15px 0 / 30px 30px,
+    linear-gradient(315deg, var(--dent) 25%, transparent 25%) 0 0 / 30px 30px,
+    linear-gradient(45deg, var(--dent) 25%, var(--fond) 25%) 0 0 / 30px 30px;
+}
