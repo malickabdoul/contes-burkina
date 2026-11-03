@@ -210,15 +210,30 @@
         + (o.objet === "poulet" ? poulet(38, -24, .6) : o.objet === "calebasse" ? calebasse(40, -26, .6) : o.objet === "pinceau" ? `<line x1="34" y1="-30" x2="50" y2="-18" stroke="${BOIS}" stroke-width="3"/>` : "");
       return sens(corps);
     }
-    if (pose === "tambour" || pose === "salut") {
-      const tambour = pose === "tambour";
-      const brasAvant = tambour
-        ? `<g class="anim-frappe" style="transform-origin:11px -77px">${bras(11, -77, 30, -50, manche, peau)}</g>`
-        : `<g class="anim-salue" style="transform-origin:11px -77px">${bras(11, -77, 24, -116, manche, peau, -1)}</g>`;
-      const corps = jambeDebout(peau, femme) + (tambour ? djembe(30, 0, .95) : "")
-        + `${bras(-11, -77, tambour ? 22 : -18, tambour ? -48 : -44, manche, peau, -1)}${femme ? etoffe("M-16 -48 L16 -48 L19 -8 Q0 -5 -19 -8Z", pagne, rayurePagne) : ""}
+    if (pose === "tambour") {
+      // les deux mains frappent la peau du djembé, l'une après l'autre
+      const main = (x, y) => `<circle cx="${x}" cy="${y}" r="4.8" fill="${peau}" stroke="${NOIR}" stroke-width="1.3"/>`;
+      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, hy, manche, peau, sx < 0 ? -1 : 1)}${main(hx, hy)}</g>`;
+      const lent = o.lent ? " lent" : "";
+      const ondes = `<g class="anim-ondes${lent}" fill="none" stroke="${JAUNE}" stroke-width="2.2" stroke-linecap="round">
+        <path d="M14 -58 q-5 -6 0 -12"/><path d="M46 -58 q5 -6 0 -12"/><path d="M30 -62 v-10"/></g>`;
+      const corps = jambeDebout(peau, femme) + djembe(30, 0, .95) + ondes
+        + frappe(-11, 23, -47, "anim-frappe-a" + lent)
+        + `${etoffe("M-12 -80 Q0 -84 12 -80 L19 -30 Q0 -26 -19 -30Z", tissu, rayure)}
+        ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}`
+        + frappe(11, 36, -46, "anim-frappe-b" + lent);
+      return sens(corps);
+    }
+    if (pose === "danse") {
+      // la danseuse : le corps balance, les bras levés ondulent, les pieds marquent le pas
+      const jambe = (x, cls) => `<g class="${cls}">${trait(x, -32, x * 1.4, -4, femme ? peau : "#3A2A1E", 7)}${pied(x * 1.4 - 1, 0, peau)}</g>`;
+      const brasLeve = (sx, hx, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, -114, manche, peau, sx < 0 ? 1 : -1)}<circle cx="${hx}" cy="-114" r="4.4" fill="${peau}" stroke="${NOIR}" stroke-width="1.2"/></g>`;
+      const corps = `<g class="anim-danse" style="transform-origin:0px 0px">${jambe(-5, "anim-pas-a")}${jambe(5, "anim-pas-b")}
+        ${brasLeve(-11, -27, "anim-bras-a")}
+        ${femme ? `<g class="anim-pagne" style="transform-origin:0px -48px">${etoffe("M-16 -48 L16 -48 L22 -8 Q0 -4 -22 -8Z", pagne, rayurePagne)}</g>` : ""}
         ${etoffe("M-12 -80 Q0 -84 12 -80 L19 -30 Q0 -26 -19 -30Z", tissu, rayure)}
-        ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}${brasAvant}`;
+        ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}
+        ${brasLeve(11, 27, "anim-bras-b")}</g>`;
       return sens(corps);
     }
     const marche = pose === "marche";
@@ -512,9 +527,9 @@
       + cheval(808, S + 14, 1.08, { allure: "debout", cavalier: true, lance: true, flip: true, robe: ROUGE })
       + feu(556, S + 22, 1.45, 0)
       + personne(384, S + 24, 1.4, { pose: "tambour", coiffe: "bonnet", bonnet: ROUGE, robe: JAUNE, liseré: NOIR })
-      + personne(466, S + 28, 1.35, { pose: "tambour", robe: VERT, liseré: JAUNE })
-      + g("", personne(632, S + 30, 1.4, { pose: "salut", flip: true, coiffe: "foulard", robe: KAOLIN, liseré: ROUGE }), "anim-arrivee");
-    return `<svg role="img" aria-label="Deux joueurs de djembé près du feu, un garde à cheval, et une femme qui arrive pour saluer" viewBox="0 0 800 450" class="scene-accueil" preserveAspectRatio="xMaxYMax slice">${contenu}</svg>`;
+      + personne(466, S + 28, 1.35, { pose: "tambour", lent: true, robe: VERT, liseré: JAUNE })
+      + g("", personne(632, S + 30, 1.4, { pose: "danse", flip: true, coiffe: "foulard", robe: KAOLIN, liseré: ROUGE }), "anim-arrivee");
+    return `<svg role="img" aria-label="Deux joueurs de djembé près du feu, un garde à cheval, et une femme qui arrive en dansant" viewBox="0 0 800 450" class="scene-accueil" preserveAspectRatio="xMaxYMax slice">${contenu}</svg>`;
   };
   window.PALETTE = { NOIR, KAOLIN, OCRE, ROUGE, VERT, JAUNE };
 })();

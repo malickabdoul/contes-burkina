@@ -292,11 +292,30 @@ main > section { padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
 .anim-hoche { animation: hoche .9s ease-in-out infinite; }
 @keyframes hoche { 30% { transform: translateY(-4px); } 60% { transform: translateY(0); } }
 
-.anim-frappe { animation: frappe .42s ease-in-out infinite alternate; }
-.anim-frappe-lent { animation-duration: .6s; }
-@keyframes frappe { from { transform: rotate(-16deg); } to { transform: rotate(10deg); } }
-.anim-salue { animation: salue .7s ease-in-out 4.2s infinite alternate; }
-@keyframes salue { from { transform: rotate(0); } to { transform: rotate(-22deg); } }
+/* accueil : les mains frappent les djembés, la danseuse danse */
+.anim-frappe-a, .anim-frappe-b { animation: frappe .5s cubic-bezier(.55, 0, .45, 1) infinite; }
+.anim-frappe-b { animation-delay: -.25s; }
+.anim-frappe-a.lent, .anim-frappe-b.lent { animation-duration: .64s; }
+.anim-frappe-b.lent { animation-delay: -.32s; }
+@keyframes frappe { 0%, 100% { transform: rotate(-34deg); } 42%, 52% { transform: rotate(0deg); } }
+.anim-ondes { animation: ondes .25s ease-out infinite; }
+.anim-ondes.lent { animation-duration: .32s; }
+@keyframes ondes { 0% { opacity: .9; } 100% { opacity: 0; } }
+.anim-danse { animation: danse 1.2s ease-in-out infinite; }
+@keyframes danse {
+  0%, 100% { transform: rotate(-7deg) translateY(0); }
+  25% { transform: rotate(0deg) translateY(-6px); }
+  50% { transform: rotate(7deg) translateY(0); }
+  75% { transform: rotate(0deg) translateY(-6px); }
+}
+.anim-bras-a { animation: bras-danse .6s ease-in-out infinite alternate; }
+.anim-bras-b { animation: bras-danse .6s ease-in-out -.6s infinite alternate; }
+@keyframes bras-danse { from { transform: rotate(-24deg); } to { transform: rotate(18deg); } }
+.anim-pas-a { animation: pas .6s ease-in-out infinite alternate; }
+.anim-pas-b { animation: pas .6s ease-in-out -.6s infinite alternate; }
+@keyframes pas { from { transform: translateY(0); } to { transform: translateY(-7px); } }
+.anim-pagne { animation: pagne 1.2s ease-in-out infinite; }
+@keyframes pagne { 0%, 100% { transform: skewX(-6deg); } 50% { transform: skewX(6deg); } }
 .anim-arrivee { animation: arrivee 3.6s cubic-bezier(.25,.6,.3,1) .7s both; }
 @keyframes arrivee { from { transform: translateX(300px); } }
 
