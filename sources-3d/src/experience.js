@@ -476,7 +476,6 @@ if (window.dessinerAccueil && !$("#entree-scene").firstChild) $("#entree-scene")
 let avecLeSon = true;
 function demanderVoix(son) {
   avecLeSon = son;
-  $("#choix-son").hidden = true;
   $("#choix-voix").hidden = false;
   const nMoore = NARRATIONS.moore.size;
   $("#note-moore").textContent = nMoore ? "La voix en mooré n'est pas encore enregistrée partout. Là où elle manque, la voix française prend le relais." : "La voix en mooré arrive bientôt. En attendant, le texte s'affiche à l'écran.";
@@ -505,7 +504,14 @@ $("#vers-sources").addEventListener("click", (e) => {
   entrer(false, "coupee");
   requestAnimationFrame(() => $("#sources").scrollIntoView());
 });
-$("#choix-voix").addEventListener("click", (e) => { const b = e.target.closest("[data-voix]"); if (b) entrer(avecLeSon, b.dataset.voix); });
+// la fenêtre « Qui raconte ? » : un choix lance l'entrée ; la croix, Échap ou un clic à côté la ferment
+function fermerChoixVoix() { $("#choix-voix").hidden = true; $(avecLeSon ? "#entrer-son" : "#entrer-silence").focus(); }
+$("#choix-voix").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-voix]");
+  if (b) { $("#choix-voix").hidden = true; entrer(avecLeSon, b.dataset.voix); }
+  else if (e.target.id === "choix-voix" || e.target.closest("#fermer-choix-voix")) fermerChoixVoix();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#choix-voix").hidden) fermerChoixVoix(); });
 
 // ---------------------------------------------------------------- boucle
 let avant = performance.now(), t = 0;

@@ -26,19 +26,23 @@
         <button type="button" class="bouton-feu" id="entrer-son" disabled>Entrer avec le son</button>
         <button type="button" class="bouton-discret clair" id="entrer-silence" disabled>Entrer sans le son</button>
       </div>
-      <div class="choix-voix" id="choix-voix" role="dialog" aria-labelledby="titre-choix-voix" hidden>
+      <p class="entree-note" id="chargement" aria-live="polite">On allume le feu...</p>
+      <noscript><p class="entree-note">Cette page a besoin de JavaScript. <a href="simple.html">Ouvrir la version simple</a>.</p></noscript>
+    </div>
+      <div class="entree-scene" id="entree-scene" aria-hidden="true"></div>
+    </div>
+    <div class="choix-voix" id="choix-voix" role="dialog" aria-modal="true" aria-labelledby="titre-choix-voix" hidden>
+      <div class="choix-voix-boite">
+        <button type="button" class="choix-voix-fermer" id="fermer-choix-voix" aria-label="Fermer">×</button>
         <p class="choix-voix-titre" id="titre-choix-voix">Qui raconte ?</p>
-        <div class="entree-boutons">
+        <p class="choix-voix-texte">Choisissez la voix qui vous raconte la veillée. Vous pourrez la changer en haut de l'écran.</p>
+        <div class="choix-voix-boutons">
           <button type="button" class="bouton-feu" data-voix="francais">Voix en français</button>
           <button type="button" class="bouton-feu" data-voix="moore">Voix en langue nationale (mooré)</button>
           <button type="button" class="bouton-discret clair" data-voix="coupee">Sans voix</button>
         </div>
         <p class="entree-note" id="note-moore" hidden></p>
       </div>
-      <p class="entree-note" id="chargement" aria-live="polite">On allume le feu...</p>
-      <noscript><p class="entree-note">Cette page a besoin de JavaScript. <a href="simple.html">Ouvrir la version simple</a>.</p></noscript>
-    </div>
-      <div class="entree-scene" id="entree-scene" aria-hidden="true"></div>
     </div>
     <div class="bande-tiebele" aria-hidden="true"></div>
   </div>

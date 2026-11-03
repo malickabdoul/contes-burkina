@@ -373,6 +373,7 @@ window.NARRATION_MOORE = [
   "ouverture-3",
   "ouverture-4",
   "carte-1",
+  "carte-2",
   "faux-depart-titre",
   "faux-depart-1",
   "faux-depart-2",
