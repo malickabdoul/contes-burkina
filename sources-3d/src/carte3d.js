@@ -2,6 +2,7 @@
 import * as THREE from "three";
 import { NOIR, KAOLIN, OCRE, ROUGE, JAUNE } from "./textures.js";
 import { creerFeu, ciel } from "./village.js";
+import { creerCavalier, animerCavalier } from "./cheval.js";
 
 const S = 100, CX = 520, CY = 387, HAUT = .22;
 
@@ -78,6 +79,33 @@ export function creerCarte(CARTE, CONTES, VOYAGE) {
   geoChemin.setDrawRange(0, 0);
   scene.add(ligne);
 
+  // le cavalier : il part du feu précédent et marche jusqu'au feu du conte
+  const cavalier = creerCavalier();
+  cavalier.scale.setScalar(.34);
+  scene.add(cavalier);
+  const sonde = new THREE.Raycaster(), bas = new THREE.Vector3(0, -1, 0);
+  const posCavalier = new THREE.Vector3(), visee = new THREE.Vector3();
+  let allure = 0;
+  // point d'arrêt : un peu avant le feu, pour ne pas marcher dans les flammes
+  const arret = (a, b) => b.clone().sub(a).setY(0).normalize().multiplyScalar(-.38).add(b);
+  function placerCavalier(n, t, dt) {
+    const b = lieux[VOYAGE[n]];
+    const a = n > 0 ? lieux[VOYAGE[n - 1]] : b.clone().add(new THREE.Vector3(-.9, 0, 1));
+    const depart = n > 0 ? arret(b, a).lerp(a, .4) : a, but = arret(a, b);
+    const avant = posCavalier.clone();
+    posCavalier.lerpVectors(depart, but, t);
+    // il pose les sabots sur la région qu'il traverse
+    sonde.set(posCavalier.clone().setY(5), bas);
+    const sol = sonde.intersectObjects(regions, false)[0];
+    posCavalier.y = sol ? sol.point.y : HAUT;
+    cavalier.position.copy(posCavalier);
+    visee.copy(but).setY(posCavalier.y);
+    if (t < .999) cavalier.lookAt(visee); else cavalier.lookAt(b.clone().setY(posCavalier.y));
+    const vitesse = dt > 0 ? avant.distanceTo(posCavalier) / dt : 0;
+    allure += (Math.min(1, vitesse * 1.6) - allure) * Math.min(1, dt * 6);
+    animerCavalier(cavalier, dt, allure);
+  }
+
   // survol
   let survolee = null;
   function survoler(m) {
@@ -93,6 +121,7 @@ export function creerCarte(CARTE, CONTES, VOYAGE) {
     etiquettes: CARTE.regions.map((r) => ({ nom: r.nom, pos: versMonde(r.lx, r.ly) })),
     vueEnsemble: { pos: [0, 9.5, 8.2], vise: [0, -.2, .5] },
     vueConte(id) { const l = lieux[id]; return { pos: [l.x + 1.4, 2.5, l.z + 3.1], vise: [l.x, .1, l.z] }; },
+    placerCavalier,
     montrerChemin(etape) { geoChemin.setDrawRange(0, Math.round(Math.max(0, etape) * 41)); },
     animer(t, dt) {
       feux.forEach((f) => f.animer(t, dt));

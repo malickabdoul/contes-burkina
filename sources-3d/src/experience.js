@@ -550,6 +550,11 @@ function boucle() {
   if (saut) { saut = false; collerCamera = true; setTimeout(() => voile.classList.remove("visible"), 60); }
 
   if (sceneAffichee === "decor" && e.scene === "decor" && !enTransition) decors.aller(e.i);
+  if (sceneAffichee === "carte") {
+    // le cavalier marche pendant le vol vers le conte ; avant le voyage, il attend au premier feu
+    const n = e.conte ? VOYAGE.indexOf(e.conte) : 0;
+    carte.placerCavalier(n, e.conte ? lisse(borne(q * 1.5)) : 0, dt);
+  }
   if (sceneAffichee === "carte") carte.montrerChemin(e.conte ? VOYAGE.length : e.cle === "chemin" ? q * 1.4 * (VOYAGE.length - 1) : 0);
   if (!(enTransition && sceneAffichee !== voulue)) {
     const c = cible(e, q, sceneAffichee);

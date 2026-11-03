@@ -205,12 +205,12 @@ body.verrou { overflow: hidden; }
 .choix-voix-fermer:hover { background: var(--kaolin); color: var(--noir); }
 @media (prefers-reduced-motion: reduce) { .choix-voix-boite { animation: none; } }
 
-/* bandes de l'accueil aux couleurs du drapeau : zigzags rouge, jaune et vert */
-.entree > .bande-tiebele { background: var(--noir) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' fill='%2314100D'/%3E%3Cg fill='none' stroke-width='6' stroke-linejoin='miter' stroke-linecap='square'%3E%3Cpath d='M-15 12 L0 3 L15 12 L30 3 L45 12' stroke='%23EF2B2D'/%3E%3Cpath d='M-15 20 L0 11 L15 20 L30 11 L45 20' stroke='%23FCD116'/%3E%3Cpath d='M-15 28 L0 19 L15 28 L30 19 L45 28' stroke='%23009E49'/%3E%3C/g%3E%3C/svg%3E") 0 0 / 30px 30px repeat-x; }
+/* bandes de l'accueil : le drapeau du Burkina Faso étiré sur toute la largeur, rouge en haut, vert en bas, étoile jaune au centre */
+.entree > .bande-tiebele { height: 34px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-50 -50 100 100'%3E%3Cpolygon fill='%23FCD116' points='0,-48 11.3,-15.5 45.6,-14.8 18.3,6 28.2,38.8 0,19.2 -28.2,38.8 -18.3,6 -45.6,-14.8 -11.3,-15.5'/%3E%3C/svg%3E") center / 30px 30px no-repeat, linear-gradient(var(--rouge) 0 50%, var(--vert) 50% 100%); }
 
 /* note du coin, en haut à droite de l'accueil */
 .entree-coin {
-  position: absolute; top: calc(30px + .9rem); right: clamp(1rem, 4vw, 3rem); z-index: 3; margin: 0;
+  position: absolute; top: calc(34px + .9rem); right: clamp(1rem, 4vw, 3rem); z-index: 3; margin: 0;
   max-width: min(22rem, 60vw); text-align: right; font-style: italic; font-size: .95rem; line-height: 1.5;
 }
 .entree-coin a { font-style: normal; font-weight: 700; }
@@ -248,7 +248,7 @@ body.verrou { overflow: hidden; }
   .entree-boutons .bouton-feu, .entree-boutons .bouton-discret { padding: .5rem .9rem; font-size: .78rem; }
   .entree-note { font-size: .85rem; }
   .choix-voix-titre { margin-top: .4rem; font-size: 1.1rem; }
-  .entree-coin { position: absolute; top: calc(30px + .4rem); font-size: .78rem; max-width: 40vw; }
+  .entree-coin { position: absolute; top: calc(34px + .4rem); font-size: .78rem; max-width: 40vw; }
   .entree-scene svg .anneaux, .entree-scene svg circle { }
 }
 @media (max-height: 520px) {
