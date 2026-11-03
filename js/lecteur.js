@@ -287,6 +287,7 @@
   if (zoneCredits) {
     const lignes = [];
     CONTES.forEach((c) => (c.voix || []).forEach((l) => { if (c.conteurs && c.conteurs[l]) lignes.push(`${c.titre} en ${LANGUES[l].toLowerCase()} : ${c.conteurs[l]}`); }));
+    if (window.NARRATION_MOORE_CONTEUR && (window.NARRATION_MOORE || []).length) lignes.push(`Narration du site en mooré : ${window.NARRATION_MOORE_CONTEUR}`);
     zoneCredits.textContent = lignes.length ? `Voix déjà enregistrées. ${lignes.join(". ")}.` : "";
   }
 

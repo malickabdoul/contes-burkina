@@ -475,6 +475,20 @@ function demanderVoix(son) {
 }
 $("#entrer-son").addEventListener("click", () => demanderVoix(true));
 $("#entrer-silence").addEventListener("click", () => demanderVoix(false));
+// bouton « Accueil » : on revient à l'écran d'entrée pour choisir à nouveau le son et la voix
+$("#bouton-accueil").addEventListener("click", () => {
+  if (narr) { narr.a.pause(); narr.id = null; narrCible = null; }
+  if (Lecteur.estOuvert()) document.querySelector("dialog[open]")?.close();
+  $("#menu-contes").hidden = true; $("#bouton-menu").setAttribute("aria-expanded", "false");
+  sonActif = false; majBoutonSon();
+  scrollTo(0, 0);
+  $("#choix-son").hidden = false; $("#choix-voix").hidden = true;
+  entree.hidden = false;
+  document.body.classList.add("verrou");
+  requestAnimationFrame(() => requestAnimationFrame(() => entree.classList.remove("partie")));
+  $("#entrer-son").focus({ preventScroll: true });
+});
+
 // lien vers les références : on entre sans le son et on descend aux sources
 $("#vers-sources").addEventListener("click", (e) => {
   e.preventDefault();

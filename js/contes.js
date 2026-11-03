@@ -165,7 +165,8 @@ window.CONTES = [
     lat: 14.03, lon: -0.03,
     langue: "fulfulde",
     ambiance: "veillee",
-    voix: [], // langues déjà enregistrées, par exemple ["moore", "francais"]
+    voix: ["fulfulde", "francais"], // langues déjà enregistrées, par exemple ["fulfulde", "francais"]
+    conteurs: { fulfulde: "DICKO Samira", francais: "OUOBA Youmanli William Arnaud" }, // qui raconte, pour les crédits
     resume: "Deux lézards se disputent une mouche, et personne ne veut s'en mêler.",
     scenes: [
       { decor: "nuit", sol: "concession", elements: ["mere", "animaux"],
@@ -365,4 +366,5 @@ window.NARRATION = [
 ];
 
 // Narration en mooré : mêmes noms de fichiers, dans audio/narration/moore/.
+window.NARRATION_MOORE_CONTEUR = "KOMPAORE Abdoul Malick";
 window.NARRATION_MOORE = ["ouverture-1", "ouverture-2", "ouverture-3", "ouverture-4", "carte-1"];

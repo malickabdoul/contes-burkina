@@ -313,6 +313,10 @@ main > section { padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
   .lecteur-corps, .lecteur-fin { flex: 1; }
   .lecteur-scene { width: 100%; }
   .progression span { display: none; }
+  .lecteur-commandes { gap: .5rem; padding-inline: .8rem; }
+  .lecteur-commandes .bouton-feu, .lecteur-commandes .bouton-discret { padding: .6rem .8rem; font-size: .78rem; }
+  .progression { gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .progression i { width: 9px; height: 9px; }
   .marqueur { width: 30px; height: 38px; }
   .nom-region { font-size: 20px; }
 }

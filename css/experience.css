@@ -192,3 +192,36 @@ body.verrou { overflow: hidden; }
   .entree { grid-template-rows: auto auto 1fr auto; }
   .entree-coin { position: static; justify-self: end; text-align: right; padding: .6rem 1rem 0; max-width: none; font-size: .85rem; }
 }
+
+/* ---------- tablettes et téléphones ---------- */
+.marque span { white-space: nowrap; }
+.entete-outils { flex-wrap: nowrap; }
+@media (max-width: 1000px) {
+  .marque span { display: none; }
+}
+@media (max-width: 640px) {
+  /* en-tête : l'essentiel tient sur une ligne */
+  .entete-outils { gap: .15rem; }
+  .outil { padding: .35rem .45rem; font-size: .7rem; }
+  #bouton-son span { display: none; }
+  .entete-outils a.outil[href="simple.html"] { display: none; }
+}
+@media (max-width: 360px) {
+  .outil { padding: .3rem .35rem; font-size: .64rem; }
+}
+/* téléphone couché : l'accueil garde la scène en fond et le texte se resserre */
+@media (max-height: 520px) and (min-aspect-ratio: 1/1) {
+  .entree { overflow-y: auto; grid-template-rows: auto 1fr auto; }
+  .entree-scene { position: absolute; inset: 0; order: 0; }
+  .entree-scene svg { height: 100%; max-height: none; aspect-ratio: auto; }
+  .entree-milieu { align-content: center; }
+  .entree-centre { padding: .6rem clamp(1rem, 5vw, 3rem); }
+  .entree-titre { font-size: clamp(1.8rem, 6.5vh + 1rem, 3rem); margin-bottom: .15em; }
+  .entree-texte { font-size: 1rem; margin: 0 0 .6rem; max-width: 26rem; }
+  .entree-boutons { margin: .6rem 0; gap: .6rem; }
+  .entree-boutons .bouton-feu, .entree-boutons .bouton-discret { padding: .5rem .9rem; font-size: .78rem; }
+  .entree-note { font-size: .85rem; }
+  .choix-voix-titre { margin-top: .4rem; font-size: 1.1rem; }
+  .entree-coin { position: absolute; top: calc(30px + .4rem); font-size: .78rem; max-width: 40vw; }
+  .entree-scene svg .anneaux, .entree-scene svg circle { }
+}
