@@ -157,6 +157,17 @@
     const pouce = trait(x, y, (x + Math.sin(ap) * 5 * t).toFixed(1), (y + Math.cos(ap) * 5 * t).toFixed(1), peau, 2.1 * t);
     return pouce + doigts + `<ellipse cx="${x}" cy="${y}" rx="${3.6 * t}" ry="${3.2 * t}" fill="${peau}" stroke="${NOIR}" stroke-width="1.2" transform="rotate(${-ang} ${x} ${y})"/>`;
   };
+  // main à plat sur la peau du tambour, vue de côté : paume, quatre doigts allongés vers l'avant, pouce dessous
+  const mainAPlat = (x, y, peau, t = 1) => {
+    const ligne = (x1, y1, x2, y2, l) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${NOIR}" stroke-width="${l + 1.3}" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${peau}" stroke-width="${l}" stroke-linecap="round"/>`;
+    let doigts = "";
+    [[-3.1, 6.2], [-1, 7.4], [1.1, 7], [3.1, 5.6]].forEach(([dy, l], i) => {
+      const y0 = (y + dy * t).toFixed(1), x0 = x + 2.5 * t, x1 = (x0 + l * t).toFixed(1), y1 = (y + dy * t + (i - 1.5) * .35 * t).toFixed(1);
+      doigts += ligne(x0.toFixed(1), y0, x1, y1, 1.9 * t);
+    });
+    const pouce = ligne(x, (y + 2.6 * t).toFixed(1), (x + 4.6 * t).toFixed(1), (y + 5.2 * t).toFixed(1), 2.2 * t);
+    return pouce + `<ellipse cx="${x}" cy="${y}" rx="${4.2 * t}" ry="${4 * t}" fill="${peau}" stroke="${NOIR}" stroke-width="1.3"/>` + doigts;
+  };
   const pied = (x, y, peau) => `<path d="M${x - 3} ${y} L${x - 3} ${y - 3} Q${x + 2} ${y - 5} ${x + 7} ${y - 1} L${x + 7} ${y}Z" fill="${peau}" stroke="${NOIR}" stroke-width="1.3"/>`;
   // tête de profil, tournée vers la droite
   function tete(cx, cy, r, peau, coiffe, couleur) {
@@ -224,15 +235,15 @@
     }
     if (pose === "tambour") {
       // les deux mains frappent la peau du djembé, l'une après l'autre
-      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx - 2, hy - 3, manche, peau, sx < 0 ? -1 : 1)}${mainOuverte(hx, hy, -40, peau, 1.25)}</g>`;
+      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, hy, manche, peau, sx < 0 ? -1 : 1)}${mainAPlat(hx, hy, peau, 1.15)}</g>`;
       const lent = o.lent ? " lent" : "";
       const ondes = `<g class="anim-ondes${lent}" fill="none" stroke="${JAUNE}" stroke-width="2.2" stroke-linecap="round">
         <path d="M14 -58 q-5 -6 0 -12"/><path d="M46 -58 q5 -6 0 -12"/><path d="M30 -62 v-10"/></g>`;
       const corps = jambeDebout(peau, femme) + djembe(30, 0, .95) + ondes
-        + frappe(-11, 23, -47, "anim-frappe-a" + lent)
+        + frappe(-11, 19, -50, "anim-frappe-a" + lent)
         + `${etoffe("M-12 -80 Q0 -84 12 -80 L19 -30 Q0 -26 -19 -30Z", tissu, rayure)}
         ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}`
-        + frappe(11, 36, -46, "anim-frappe-b" + lent);
+        + frappe(11, 28, -49, "anim-frappe-b" + lent);
       return sens(corps);
     }
     if (pose === "danse") {
