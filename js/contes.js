@@ -425,4 +425,5 @@ window.NARRATION_MOORE = [
   "araignee-5",
   "araignee-6",
   "araignee-fin",
+  "final",
 ];

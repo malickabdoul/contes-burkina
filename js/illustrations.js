@@ -235,7 +235,7 @@
     }
     if (pose === "tambour") {
       // les deux mains frappent la peau du djembé, l'une après l'autre
-      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, hy, manche, peau, sx < 0 ? -1 : 1)}${mainAPlat(hx, hy, peau, 1.15)}</g>`;
+      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, hy, manche, peau, sx < 0 ? -1 : 1)}${mainAPlat(hx, hy, peau, .8)}</g>`;
       const lent = o.lent ? " lent" : "";
       const ondes = `<g class="anim-ondes${lent}" fill="none" stroke="${JAUNE}" stroke-width="2.2" stroke-linecap="round">
         <path d="M14 -58 q-5 -6 0 -12"/><path d="M46 -58 q5 -6 0 -12"/><path d="M30 -62 v-10"/></g>`;
