@@ -145,6 +145,18 @@
   // un membre cerné de noir
   const trait = (x1, y1, x2, y2, couleur, l) =>
     `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${NOIR}" stroke-width="${l + 2.6}" stroke-linecap="round"/><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${couleur}" stroke-width="${l}" stroke-linecap="round"/>`;
+  // main ouverte avec ses cinq doigts ; ang = direction des doigts en degrés (0 = vers le bas, 180 = vers le haut)
+  const mainOuverte = (x, y, ang, peau, t = 1) => {
+    let doigts = "";
+    [-24, -8, 8, 22].forEach((d, i) => {
+      const a = (ang + d) * Math.PI / 180, l = (i === 0 || i === 3 ? 4.6 : 5.6) * t;
+      const x1 = x + Math.sin(a) * 2.2 * t, y1 = y + Math.cos(a) * 2.2 * t;
+      doigts += trait(x1.toFixed(1), y1.toFixed(1), (x1 + Math.sin(a) * l).toFixed(1), (y1 + Math.cos(a) * l).toFixed(1), peau, 1.9 * t);
+    });
+    const ap = (ang - 70) * Math.PI / 180;
+    const pouce = trait(x, y, (x + Math.sin(ap) * 5 * t).toFixed(1), (y + Math.cos(ap) * 5 * t).toFixed(1), peau, 2.1 * t);
+    return pouce + doigts + `<ellipse cx="${x}" cy="${y}" rx="${3.6 * t}" ry="${3.2 * t}" fill="${peau}" stroke="${NOIR}" stroke-width="1.2" transform="rotate(${-ang} ${x} ${y})"/>`;
+  };
   const pied = (x, y, peau) => `<path d="M${x - 3} ${y} L${x - 3} ${y - 3} Q${x + 2} ${y - 5} ${x + 7} ${y - 1} L${x + 7} ${y}Z" fill="${peau}" stroke="${NOIR}" stroke-width="1.3"/>`;
   // tête de profil, tournée vers la droite
   function tete(cx, cy, r, peau, coiffe, couleur) {
@@ -212,8 +224,7 @@
     }
     if (pose === "tambour") {
       // les deux mains frappent la peau du djembé, l'une après l'autre
-      const main = (x, y) => `<circle cx="${x}" cy="${y}" r="4.8" fill="${peau}" stroke="${NOIR}" stroke-width="1.3"/>`;
-      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, hy, manche, peau, sx < 0 ? -1 : 1)}${main(hx, hy)}</g>`;
+      const frappe = (sx, hx, hy, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx - 2, hy - 3, manche, peau, sx < 0 ? -1 : 1)}${mainOuverte(hx, hy, -40, peau, 1.25)}</g>`;
       const lent = o.lent ? " lent" : "";
       const ondes = `<g class="anim-ondes${lent}" fill="none" stroke="${JAUNE}" stroke-width="2.2" stroke-linecap="round">
         <path d="M14 -58 q-5 -6 0 -12"/><path d="M46 -58 q5 -6 0 -12"/><path d="M30 -62 v-10"/></g>`;
@@ -227,13 +238,19 @@
     if (pose === "danse") {
       // la danseuse : le corps balance, les bras levés ondulent, les pieds marquent le pas
       const jambe = (x, cls) => `<g class="${cls}">${trait(x, -32, x * 1.4, -4, femme ? peau : "#3A2A1E", 7)}${pied(x * 1.4 - 1, 0, peau)}</g>`;
-      const brasLeve = (sx, hx, cls) => `<g class="${cls}" style="transform-origin:${sx}px -77px">${bras(sx, -77, hx, -114, manche, peau, sx < 0 ? 1 : -1)}<circle cx="${hx}" cy="-114" r="4.4" fill="${peau}" stroke="${NOIR}" stroke-width="1.2"/></g>`;
+      const brasLeve = (sx, cls) => {
+        const s = Math.sign(sx), cx = sx + s * 15, cy = -90, hx = sx + s * 11, hy = -113;
+        return `<g class="${cls}" style="transform-origin:${sx}px -77px">
+          ${trait(sx, -77, cx, cy, peau, 6.4)}${trait(sx, -77, sx + s * 5, -81, manche, 8)}
+          <g class="${cls}-avant" style="transform-origin:${cx}px ${cy}px">${trait(cx, cy, hx, hy, peau, 5.4)}${mainOuverte(hx, hy - 2, 180 - s * 12, peau, 1.15)}</g>
+          <circle cx="${cx}" cy="${cy}" r="3.3" fill="${peau}"/></g>`;
+      };
       const corps = `<g class="anim-danse" style="transform-origin:0px 0px">${jambe(-5, "anim-pas-a")}${jambe(5, "anim-pas-b")}
-        ${brasLeve(-11, -27, "anim-bras-a")}
+        ${brasLeve(-11, "anim-bras-a")}
         ${femme ? `<g class="anim-pagne" style="transform-origin:0px -48px">${etoffe("M-16 -48 L16 -48 L22 -8 Q0 -4 -22 -8Z", pagne, rayurePagne)}</g>` : ""}
         ${etoffe("M-12 -80 Q0 -84 12 -80 L19 -30 Q0 -26 -19 -30Z", tissu, rayure)}
         ${trait(0, -84, 0, -79, peau, 6)}${tete(0, -91, 8.4, peau, coiffe, coiffeC)}
-        ${brasLeve(11, 27, "anim-bras-b")}</g>`;
+        ${brasLeve(11, "anim-bras-b")}</g>`;
       return sens(corps);
     }
     const marche = pose === "marche";

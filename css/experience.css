@@ -275,3 +275,5 @@ body.verrou { overflow: hidden; }
   .indice-defiler svg { width: 20px; height: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .indice-defiler svg { animation: none; } }
+
+.cartel-ouverture .accueil-phrase { max-width: 38rem; }

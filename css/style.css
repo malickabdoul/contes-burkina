@@ -310,7 +310,10 @@ main > section { padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem); }
 }
 .anim-bras-a { animation: bras-danse .6s ease-in-out infinite alternate; }
 .anim-bras-b { animation: bras-danse .6s ease-in-out -.6s infinite alternate; }
-@keyframes bras-danse { from { transform: rotate(-24deg); } to { transform: rotate(18deg); } }
+@keyframes bras-danse { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+.anim-bras-a-avant { animation: avant-bras .6s ease-in-out infinite alternate; }
+.anim-bras-b-avant { animation: avant-bras .6s ease-in-out -.6s infinite alternate; }
+@keyframes avant-bras { from { transform: rotate(22deg); } to { transform: rotate(-22deg); } }
 .anim-pas-a { animation: pas .6s ease-in-out infinite alternate; }
 .anim-pas-b { animation: pas .6s ease-in-out -.6s infinite alternate; }
 @keyframes pas { from { transform: translateY(0); } to { transform: translateY(-7px); } }

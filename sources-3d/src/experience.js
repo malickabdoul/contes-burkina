@@ -477,10 +477,7 @@ let avecLeSon = true;
 function demanderVoix(son) {
   avecLeSon = son;
   $("#choix-voix").hidden = false;
-  const nMoore = NARRATIONS.moore.size;
-  $("#note-moore").textContent = nMoore ? "La voix en mooré n'est pas encore enregistrée partout. Là où elle manque, la voix française prend le relais." : "La voix en mooré arrive bientôt. En attendant, le texte s'affiche à l'écran.";
-  $("#note-moore").hidden = nMoore >= NARRATIONS.francais.size;
-  $('#choix-voix [data-voix="francais"]').focus();
+  $('#choix-voix [data-voix="moore"]').focus();
 }
 $("#entrer-son").addEventListener("click", () => demanderVoix(true));
 $("#entrer-silence").addEventListener("click", () => demanderVoix(false));
