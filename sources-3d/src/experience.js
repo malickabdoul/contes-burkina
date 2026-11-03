@@ -498,6 +498,13 @@ $("#bouton-accueil").addEventListener("click", () => {
   $("#entrer-son").focus({ preventScroll: true });
 });
 
+// indice « Faites défiler vers le bas » : visible en haut de la page, il disparaît dès qu'on descend
+const indice = $("#indice-defiler");
+const majIndice = () => indice.classList.toggle("visible", entree.hidden && scrollY < innerHeight * .25);
+addEventListener("scroll", majIndice, { passive: true });
+setInterval(majIndice, 500);
+indice.addEventListener("click", () => scrollTo({ top: innerHeight * 1.1, behavior: reduit ? "auto" : "smooth" }));
+
 // lien vers les références : on entre sans le son et on descend aux sources
 $("#vers-sources").addEventListener("click", (e) => {
   e.preventDefault();
