@@ -367,4 +367,24 @@ window.NARRATION = [
 
 // Narration en mooré : mêmes noms de fichiers, dans audio/narration/moore/.
 window.NARRATION_MOORE_CONTEUR = "KOMPAORE Abdoul Malick";
-window.NARRATION_MOORE = ["ouverture-1", "ouverture-2", "ouverture-3", "ouverture-4", "carte-1"];
+window.NARRATION_MOORE = [
+  "ouverture-1",
+  "ouverture-2",
+  "ouverture-3",
+  "ouverture-4",
+  "carte-1",
+  "faux-depart-titre",
+  "faux-depart-1",
+  "faux-depart-2",
+  "faux-depart-3",
+  "faux-depart-4",
+  "faux-depart-5",
+  "faux-depart-fin",
+  "yennenga-1",
+  "yennenga-2",
+  "yennenga-3",
+  "yennenga-4",
+  "yennenga-5",
+  "yennenga-6",
+  "yennenga-fin",
+];

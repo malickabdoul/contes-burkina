@@ -381,7 +381,11 @@ function regleSon(dt) {
 // La narration existe en français (audio/narration/) et peut exister en mooré (audio/narration/moore/).
 const NARRATIONS = { francais: new Set(window.NARRATION || []), moore: new Set(window.NARRATION_MOORE || []) };
 let langueVoix = "francais", NARRATION = NARRATIONS.francais;
-const dossierVoix = () => (langueVoix === "moore" ? "audio/narration/moore/" : "audio/narration/");
+// en mooré, une étape pas encore enregistrée est dite par la voix française
+const fichierVoix = (id) => (langueVoix === "moore" && NARRATIONS.moore.has(id) ? "audio/narration/moore/" : "audio/narration/") + id + ".mp3";
+const aUneVoix = (id) => NARRATION.has(id) || NARRATIONS.francais.has(id);
+// un court silence, pour débloquer le son pendant un clic
+const SILENCE = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
 let voixActive = true, narr = null, narrCible = null, narrDepuis = 0;
 function preparerNarration(id) {
   if (narr || !NARRATION.size) return;
@@ -390,12 +394,14 @@ function preparerNarration(id) {
   narr = { a, id: null, vol: 0 };
   if (contexte) { narr.gain = contexte.createGain(); contexte.createMediaElementSource(a).connect(narr.gain).connect(contexte.destination); }
   // pendant le clic d'entrée : on lance tout de suite la première étape
-  if (id) { a.src = `${dossierVoix()}${id}.mp3`; narr.id = id; narr.vol = 1; a.play().catch(() => {}); }
+  if (id) { a.src = fichierVoix(id); narr.id = id; narr.vol = 1; a.play().catch(() => {}); }
+  // sans étape à lire, on débloque quand même le lecteur pendant le clic (nécessaire sur iPhone)
+  else { a.src = SILENCE; a.play().then(() => a.pause()).catch(() => {}); }
 }
 const narrationEnCours = () => narr && narr.id && !narr.a.paused && !narr.a.ended;
 function regleNarration(dt, e, cache) {
   const id = e.el.dataset.voix;
-  const voulu = !cache && voixActive && id && NARRATION.has(id) ? id : null;
+  const voulu = !cache && voixActive && id && aUneVoix(id) ? id : null;
   if (voulu !== narrCible) { narrCible = voulu; narrDepuis = performance.now(); }
   if (!narr) return;
   if (narr.id && narr.id !== narrCible) {
@@ -404,7 +410,7 @@ function regleNarration(dt, e, cache) {
     if (narr.vol === 0) { narr.a.pause(); narr.id = null; }
   } else if (!narr.id && narrCible && performance.now() - narrDepuis > 350) {
     // on attend un instant : si on défile vite, on ne lance pas chaque étape
-    narr.a.src = `${dossierVoix()}${narrCible}.mp3`;
+    narr.a.src = fichierVoix(narrCible);
     narr.id = narrCible; narr.vol = 1;
     narr.a.play().catch(() => {});
   }
@@ -427,7 +433,11 @@ function choisirVoix(etat) {
 if (NARRATIONS.francais.size) {
   boutonVoix.hidden = false;
   choisirVoix("francais");
-  boutonVoix.addEventListener("click", () => choisirVoix(etatsVoix[(etatsVoix.indexOf(boutonVoix.dataset.etat) + 1) % etatsVoix.length]));
+  boutonVoix.addEventListener("click", () => {
+    // le clic sert aussi à autoriser le son, si on était entré sans voix
+    deverrouillerSon(); preparerNarration(null);
+    choisirVoix(etatsVoix[(etatsVoix.indexOf(boutonVoix.dataset.etat) + 1) % etatsVoix.length]);
+  });
 }
 
 function ambiancePour(e) {
@@ -469,7 +479,7 @@ function demanderVoix(son) {
   $("#choix-son").hidden = true;
   $("#choix-voix").hidden = false;
   const nMoore = NARRATIONS.moore.size;
-  $("#note-moore").textContent = nMoore ? "Pour l'instant, la voix en mooré raconte l'ouverture du site. La suite s'affiche en texte." : "La voix en mooré arrive bientôt. En attendant, le texte s'affiche à l'écran.";
+  $("#note-moore").textContent = nMoore ? "La voix en mooré n'est pas encore enregistrée partout. Là où elle manque, la voix française prend le relais." : "La voix en mooré arrive bientôt. En attendant, le texte s'affiche à l'écran.";
   $("#note-moore").hidden = nMoore >= NARRATIONS.francais.size;
   $('#choix-voix [data-voix="francais"]').focus();
 }
